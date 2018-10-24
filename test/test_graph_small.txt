@@ -1,0 +1,3 @@
+3 2
+aardvark ferret
+capybara aardvark

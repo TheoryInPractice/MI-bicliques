@@ -1,0 +1,8 @@
+7 10
+aardvark capybara ferret
+capybara aardvark elephant ferret
+ferret aardvark capybara dingo
+badger dingo elephant guppy
+dingo badger elephant ferret guppy
+guppy badger dingo
+elephant badger capybara dingo
