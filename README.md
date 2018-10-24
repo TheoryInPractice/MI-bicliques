@@ -35,9 +35,9 @@ Optional argument for just OCT-MIB:
 ### Example usage
 
 The call
-
-  > $>./bicliques -a l -i ./test/test_graph.txt -p octmib_results.txt
-
+```
+$>./bicliques -a l -i ./test/test_graph.txt -p octmib_results.txt
+```
 runs our algorithm OCT-MIB on a 7 node graph in our testing suite, and outputs the bicliques found in a file named `octmib_results.txt`.
 The output to the screen should look like this:
 ```
