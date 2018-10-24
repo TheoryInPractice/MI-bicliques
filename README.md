@@ -50,14 +50,15 @@ The output to the screen should look like this:
 #	R in CC has size 2
 ```
 and the file `octmib_results.txt` should look like this:
-  >0,1,3,
+```
+0,1,3,
 1,2,3,4,
 2,3,4,6,
 0,2,4,
 2,4,5,
 1,3,5,
 3,5,6,
-
+```
 
 ## Data formatting
 
