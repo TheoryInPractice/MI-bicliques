@@ -26,7 +26,7 @@ Optional arguments for both Dias and OCT-MIB:
   * `-h` --- Show a help message and exit.
   * `-t [TIMEOUT]`  --- Set a timeout for the algorithm.
   * `-c` --- Run in count-only mode; Do not output the bicliques, only count how many there are.
-  * `-p [FILE_PATH]` --- Run in print mode; write the bicliques to file. Specify the path to and name of the file where the results should be stored.
+  * `-p [FILE_PATH]` --- Run in print mode; write the bicliques to file. Specify the path to and name of the file where the results should be stored. The output file is formatted such that each line is a single biclique with vertices comma-separated and sorted in ascending order.
   * `-l [FILE_PATH]` --- Print to file some statistics about the performance of the algorithm, including the runtime of algorithm components and the number of MIBs found. Specify the path to and name of the file where the results should be stored.
 
 Optional argument for just OCT-MIB:
@@ -38,7 +38,7 @@ The call
 ```
 $>./bicliques -a o -i ./test/test_graph.txt -p octmib_results.txt
 ```
-runs our algorithm OCT-MIB on a 7 node graph in our testing suite, and outputs the bicliques found in a file named `octmib_results.txt`.
+runs our algorithm OCT-MIB on a 7 node graph in our testing suite, and outputs the bicliques found to a file named `octmib_results.txt`.
 The output to the screen should look like this:
 ```
 # Running algorithm o
@@ -61,6 +61,10 @@ and the file `octmib_results.txt` should look like this:
 3,5,6,
 ```
 
+To run the algorithm in count-only mode, instead run
+```
+$>./bicliques -a o -i ./test/test_graph.txt -c
+```
 
 ### Example usage: LexMIB
 
@@ -68,7 +72,7 @@ The call
 ```
 $>./bicliques -a l -i ./test/test_graph.txt -p lexmib_results.txt
 ```
-runs the algorithm LexMIB on a 7 node graph in our testing suite, and outputs the bicliques found in a file named `lexmib_results.txt`.
+runs the algorithm LexMIB on a 7 node graph in our testing suite, and outputs the bicliques found to a file named `lexmib_results.txt`.
 The output to the screen should look like this:
 ```
 # Running algorithm l
