@@ -6,8 +6,8 @@
 * It is licensed under the three-clause BSD license; see LICENSE.
 */
 
-#ifndef BICLIQUES_DIAS_H
-#define BICLIQUES_DIAS_H
+#ifndef BICLIQUES_LEXMIB_H
+#define BICLIQUES_LEXMIB_H
 
 #include <fstream>
 #include <queue>
@@ -23,14 +23,13 @@
 * related to the performance of the algorithm like runtime, and the bicliques
 * found.
 */
-struct DiasResults {
+struct LexMIBResults {
 
     std::string print_mibs_dest = std::string("");
     bool print_mode = false;
     bool count_only_mode = false;
     bool relabeling_mode = false;
 
-    double time_dias = 0.0;
     double time_ccs = 0.0;
 
     size_t total_num_mibs = 0;
@@ -87,7 +86,8 @@ struct DiasResults {
 class BicliqueArchive {
     private:
 
-        std::priority_queue<BicliqueLite, std::vector<BicliqueLite>, std::less<BicliqueLite> > mib_heap;
+        // std::priority_queue<BicliqueLite, std::vector<BicliqueLite>, std::less<BicliqueLite> > mib_heap;
+        std::priority_queue<BicliqueLite, std::vector<BicliqueLite>, std::greater<BicliqueLite> > mib_heap;
         std::unordered_map<std::string,bool> map;
 
     public:
@@ -124,21 +124,21 @@ void check_for_mib(const Graph & g,
 
 
 /**
-* Given a graph and DiasResults object, this updates diasresults to contain
+* Given a graph and LexMIBResults object, this updates lexmibresults to contain
 * a number of statistics of the graph and the performance of the algorithm.
 */
-void dias_general(DiasResults & diasresults, const Graph & g);
+void lexmib(LexMIBResults & lexmibresults, const Graph & g);
 
 /**
 * Given a graph this simply computes and outputs a vector of bicliques found.
 */
-std::vector<BicliqueLite> dias_general(const Graph & g);
+std::vector<BicliqueLite> lexmib(const Graph & g);
 
 /**
 * Intended for internal use; this function assumes the input graph is connected.
 */
-void dias_general_cc(DiasResults & diasresults,
+void lexmib_cc(LexMIBResults & lexmibresults,
                      const Graph & g);
 
 
-#endif //BICLIQUES_DIAS_H
+#endif //BICLIQUES_LEXMIB_H

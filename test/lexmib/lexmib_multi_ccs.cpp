@@ -8,40 +8,40 @@
 
 #include<iostream>
 #include<vector>
-#include"../../src/algorithms/DiasGeneral.h"
+#include"../../src/algorithms/LexMIB.h"
 #include"../ground_truth_mibs.h"
 
 /**
- * Test the full DiasGeneral.cpp algorithm
+ * Test the full LexMIB.cpp algorithm
  */
-int test_diasgeneral_dias_general(int argc, char ** argv) {
+int test_lexmib_lexmib_multi_ccs(int argc, char ** argv) {
 
-    // Whether or not an error has occurred.
+    // WhLexMIBt an error has occurred.
     bool error = false;
 
     // Create graph
-    std::string path_to_file = "./test/test_graph.txt";
+    std::string path_to_file = "./test/test_multi_ccs.txt";
     Graph input_g(path_to_file, Graph::FILE_FORMAT::adjlist);
 
     // import ground truth bicliques
     ground_truth_mibs GT;
-    std::vector<std::vector<size_t>> mibs_true_raw = GT.mibs_true_raw("./test/ground_truth.txt");
+    std::vector<std::vector<size_t>> mibs_true_raw = GT.mibs_true_raw("./test/ground_truth_multi_ccs.txt");
 
     const std::vector<std::vector<size_t>> orderings = {
-        {0,1,2,3,4,5,6},
-        {6,1,2,3,4,5,0},
-        {6,1,5,2,4,3,0},
-        {0,6,2,5,3,4,1},
-        {1, 3, 6, 5, 2, 0, 4},
-        {0, 3, 4, 5, 2, 6, 1},
-        {1, 5, 2, 4, 3, 6, 0},
-        {2, 3, 0, 6, 4, 5, 1},
-        {1, 4, 3, 5, 6, 0, 2},
-        {5, 0, 6, 4, 1, 3, 2},
-        {1, 4, 6, 0, 3, 2, 5},
-        {2, 4, 3, 6, 0, 5, 1},
-        {0, 4, 5, 1, 3, 6, 2},
-        {2, 5, 4, 6, 0, 3, 1}
+        {0,1,2,3,4,5,6,7,8,9},
+        {6,1,2,3,4,5,0,7,8,9},
+        {6,1,5,2,4,3,0,7,8,9},
+        {0,6,2,5,3,4,1,7,8,9},
+        {1, 3, 6, 5, 2, 0, 4,7,8,9},
+        {0, 3, 4, 5, 2, 6, 1,7,8,9},
+        {1, 5, 2, 4, 3,7,8,9, 6, 0},
+        {2, 3, 0, 6, 4,7,8,9, 5, 1},
+        {1, 4,7,8,9, 3, 5, 6, 0, 2},
+        {5, 0, 6,7,8,9, 4, 1, 3, 2},
+        {1, 4, 6, 0, 3, 2, 5,7,8,9},
+        {2, 4, 3, 6,7,8,9, 0, 5, 1},
+        {0, 4, 5, 1, 3,7,8,9, 6, 2},
+        {2,7,8,9, 5, 4, 6, 0, 3, 1}
     };
 
     for (size_t idx = 0; idx < orderings.size(); idx++) {
@@ -73,7 +73,7 @@ int test_diasgeneral_dias_general(int argc, char ** argv) {
         }
         const auto mibs_map_true = mibs_map;
 
-        auto mibs_computed = dias_general(subgraph);
+        auto mibs_computed = lexmib(subgraph);
 
         for (auto mib: mibs_computed){
             if (mibs_map.find(mib.to_string()) != mibs_map.end()){
@@ -86,7 +86,7 @@ int test_diasgeneral_dias_general(int argc, char ** argv) {
 
         // Check we found correct number of mib
         if (mibs_true.size() != mibs_computed.size()) {
-            std::cout << "ERROR: dias_general found wrong number of mibs: ";
+            std::cout << "ERROR: lexmib found wrong number of mibs: ";
             std::cout << mibs_computed.size() << " instead of correct number ";
             std::cout << mibs_true.size() << std::endl;
             error=true;
@@ -94,30 +94,16 @@ int test_diasgeneral_dias_general(int argc, char ** argv) {
         for (auto true_mib: mibs_true) {
             std::string true_mib_string = vector_to_string(true_mib);
             if (mibs_map[true_mib_string] != 1) {
-                std::cout << "ERROR: dias_general wrong about true mib; " << true_mib_string << std::endl;
+                std::cout << "ERROR: lexmib wrong about true mib; " << true_mib_string << std::endl;
                 std::cout << "number of times found: " << mibs_map[true_mib_string] << std::endl;
                 error=true;
             }
         }
         for (auto iter: mibs_map) {
             if ( mibs_map_true.find(iter.first) == mibs_map_true.end() ) {
-                std::cout << "ERROR: dias_general found wrong mib: " << iter.first << std::endl;
+                std::cout << "ERROR: lexmib found wrong mib: " << iter.first << std::endl;
                 error=true;
             }
-        }
-
-        DiasResults diasresults;
-        diasresults.count_only_mode = true;
-        dias_general(diasresults, subgraph);
-
-        size_t computed_number_mibs = diasresults.total_num_mibs;
-
-        // Check we found correct number of mib
-        if (mibs_true.size() != computed_number_mibs) {
-            std::cout << "ERROR: dias_general count_only_mode found wrong number of mibs: ";
-            std::cout << computed_number_mibs << " instead of correct number ";
-            std::cout << mibs_true.size() << std::endl;
-            error=true;
         }
 
     }

@@ -8,34 +8,42 @@
 
 #include<iostream>
 #include<vector>
-#include"../../src/algorithms/DiasGeneral.h"
+#include"../../src/algorithms/LexMIB.h"
 #include"../ground_truth_mibs.h"
 
 /**
- * Test the DiasGeneral.cpp main algorithm
+ * Test the LexMIB.cpp main algorithm
  */
-int test_diasgeneral_dias_general_large(int argc, char ** argv) {
+int test_lexmib_lexmib_medium(int argc, char ** argv) {
 
     // Whether or not an error has occurred.
     bool error = false;
 
     // Create graph
-    std::string path_to_file = "./test/test_graph_large.txt";
+    std::string path_to_file = "./test/test_graph_delay_conditions.txt";
     Graph input_g(path_to_file, Graph::FILE_FORMAT::adjlist);
 
     // import ground truth bicliques
     ground_truth_mibs GT;
-    std::vector<std::vector<size_t>> mibs_true_raw = GT.mibs_true_raw("./test/ground_truth_large.txt");
+    std::vector<std::vector<size_t>> mibs_true_raw = GT.mibs_true_raw("./test/ground_truth_medium.txt");
 
     // Create some random permutations of the input graph labels
     const std::vector<std::vector<size_t>> orderings = {
-        {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29},
-        {16,11,3,8,6,5,17,20,14,13,15,23,2,7,22,25,12,26,4,10,29,28,19,27,18,9,24,0,21,1},
-        {25,8,3,16,13,15,9,20,24,21,18,23,1,10,22,2,14,6,4,7,17,19,0,28,27,11,26,29,5,12},
-        {1,23,16,3,15,25,8,18,20,21,10,2,7,28,11,27,22,13,19,14,29,6,9,4,26,12,0,5,17,24}
+        {0,1,2,3,4,5,6,7,8,9,10,11,12,13},
+        {13,6,0,1,4,9,5,2,10,12,11,7,3,8},
+        {2, 8, 3, 4, 1, 12, 0, 10, 9, 5, 6, 11, 7, 13},
+        {11, 12, 5, 0, 4, 13, 6, 2, 8, 9, 1, 10, 3, 7},
+        {9, 10, 11, 1, 8, 5, 6, 0, 3, 13, 12, 7, 2, 4},
+        {3, 4, 0, 5, 10, 9, 8, 13, 6, 1, 11, 7, 12, 2},
+        {6, 0, 12, 2, 11, 5, 9, 7, 8, 10, 3, 4, 13, 1},
+        {4, 8, 1, 2, 13, 7, 5, 0, 6, 10, 3, 11, 9, 12},
+        {12, 10, 8, 3, 4, 0, 11, 2, 13, 6, 7, 1, 5, 9},
+        {2, 13, 0, 11, 4, 7, 3, 8, 12, 9, 6, 10, 5, 1},
+        {2, 11, 4, 12, 9, 1, 13, 3, 10, 7, 6, 0, 8, 5},
+        {6, 10, 0, 3, 1, 11, 12, 9, 5, 4, 7, 2, 13, 8}
     };
 
-    // Iterate over each such permutation and run dias_general on the permuted graph
+    // Iterate over each such permutation and run lexmib on the permuted graph
     for (size_t idx = 0; idx < orderings.size(); idx++) {
 
         const auto ordering = orderings[idx];
@@ -47,12 +55,24 @@ int test_diasgeneral_dias_general_large(int argc, char ** argv) {
             reverse_ordering[ordering[idx1]] = idx1;
         }
 
+        // Test basic graph information
+        if (subgraph.get_num_edges() != input_g.get_num_edges()) {
+            std::cout << "ERROR: Num edges should be " << input_g.get_num_edges()
+            << ", is " << subgraph.get_num_edges() << std::endl;
+            error = true;
+        }
+        if (subgraph.get_num_vertices() != input_g.get_num_vertices()) {
+            std::cout << "ERROR: Num vertices should be " << input_g.get_num_vertices()
+            << ", is " << subgraph.get_num_vertices() << std::endl;
+            error = true;
+        }
+
         // relabel groundtruth using new labeling
         auto mibs_true = convert_node_labels_vector(mibs_true_raw,
                                                       reverse_ordering);
 
         // Load the ground truth into a hashtable, each biclique as a string
-        // mibs_map  -- to track how many times dias_general finds each mib
+        // mibs_map  -- to track how many times lexmib finds each mib
         // mibs_map_true -- holds just the ground truth
         std::unordered_map<std::string,size_t> mibs_map;
         for (size_t idx1 = 0; idx1<mibs_true.size(); idx1++) {
@@ -61,7 +81,7 @@ int test_diasgeneral_dias_general_large(int argc, char ** argv) {
         }
         const auto mibs_map_true = mibs_map;
 
-        auto mibs_computed = dias_general(subgraph);
+        auto mibs_computed = lexmib(subgraph);
 
         for (auto mib: mibs_computed){
             if (mibs_map.find(mib.to_string()) != mibs_map.end()){
@@ -74,7 +94,7 @@ int test_diasgeneral_dias_general_large(int argc, char ** argv) {
 
         // Check we found correct number of mib
         if (mibs_true.size() != mibs_computed.size()) {
-            std::cout << "ERROR: dias_general found wrong number of mibs: ";
+            std::cout << "ERROR: lexmib found wrong number of mibs: ";
             std::cout << mibs_computed.size() << " instead of correct number ";
             std::cout << mibs_true.size() << std::endl;
             error=true;
@@ -82,27 +102,27 @@ int test_diasgeneral_dias_general_large(int argc, char ** argv) {
         for (auto true_mib: mibs_true) {
             std::string true_mib_string = vector_to_string(true_mib);
             if (mibs_map[true_mib_string] != 1) {
-                std::cout << "ERROR: dias_general wrong about true mib; " << true_mib_string << std::endl;
+                std::cout << "ERROR: lexmib wrong about true mib; " << true_mib_string << std::endl;
                 std::cout << "number of times found: " << mibs_map[true_mib_string] << std::endl;
                 error=true;
             }
         }
         for (auto iter: mibs_map) {
             if ( mibs_map_true.find(iter.first) == mibs_map_true.end() ) {
-                std::cout << "ERROR: dias_general found wrong mib: " << iter.first << std::endl;
+                std::cout << "ERROR: lexmib found wrong mib: " << iter.first << std::endl;
                 error=true;
             }
         }
 
-        DiasResults diasresults;
-        diasresults.count_only_mode = true;
-        dias_general(diasresults, subgraph);
+        LexMIBResults lexmibresults;
+        lexmibresults.count_only_mode = true;
+        lexmib(lexmibresults, subgraph);
 
-        size_t computed_number_mibs = diasresults.total_num_mibs;
+        size_t computed_number_mibs = lexmibresults.total_num_mibs;
 
         // Check we found correct number of mib
         if (mibs_true.size() != computed_number_mibs) {
-            std::cout << "ERROR: dias_general count_only_mode found wrong number of mibs: ";
+            std::cout << "ERROR: lexmib count_only_mode found wrong number of mibs: ";
             std::cout << computed_number_mibs << " instead of correct number ";
             std::cout << mibs_true.size() << std::endl;
             error=true;

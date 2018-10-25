@@ -42,6 +42,9 @@ public:
     bool operator==(const BicliqueLite &other) const;
     bool operator!=(const BicliqueLite &other) const;
     bool operator<(const BicliqueLite &other) const;
+    inline bool operator>(const BicliqueLite &other) const {
+        return ( !(*this<other) && !(*this==other) );
+    }
 
     const std::string to_string();
     const std::string & to_string_persistent();

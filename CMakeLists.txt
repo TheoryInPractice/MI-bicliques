@@ -41,8 +41,8 @@ add_executable(bicliques
         src/algorithms/OCTMIB.h
         src/algorithms/AllMaximalIndependentSets.cpp
         src/algorithms/AllMaximalIndependentSets.h
-        src/algorithms/DiasGeneral.cpp
-        src/algorithms/DiasGeneral.h
+        src/algorithms/LexMIB.cpp
+        src/algorithms/LexMIB.h
         src/algorithms/SimpleCCs.cpp
         src/algorithms/SimpleCCs.h
         src/algorithms/SimpleOCT.cpp
@@ -150,13 +150,13 @@ create_test_sourcelist(testsrclist
         test/maximalcrossingbicliques/mcb.cpp
         test/maximalcrossingbicliques/mcb_large.cpp
         test/maximalcrossingbicliques/mcb_huge.cpp
-        test/diasgeneral/lex_least_biclique.cpp
-        test/diasgeneral/check_for_mib.cpp
-        test/diasgeneral/dias_general.cpp
-        test/diasgeneral/dias_general_multi_ccs.cpp
-        test/diasgeneral/dias_general_medium.cpp
-        test/diasgeneral/dias_general_large.cpp
-        test/diasgeneral/count_only_multi_ccs.cpp
+        test/lexmib/lex_least_biclique.cpp
+        test/lexmib/check_for_mib.cpp
+        test/lexmib/lexmib.cpp
+        test/lexmib/lexmib_multi_ccs.cpp
+        test/lexmib/lexmib_medium.cpp
+        test/lexmib/lexmib_large.cpp
+        test/lexmib/count_only_multi_ccs.cpp
         test/simpleoct/simpleoct.cpp
         test/simpleoct/simpleoct_bipartite.cpp
         test/simpleoct/simpleoct_bipartite_huge.cpp

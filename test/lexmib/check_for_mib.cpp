@@ -12,13 +12,13 @@
 #include"../../src/graph/Graph.h"
 #include"../../src/graph/OrderedVertexSet.h"
 #include"../../src/graph/OrderedVector.h"
-#include "../../src/algorithms/DiasGeneral.h"
+#include "../../src/algorithms/LexMIB.h"
 
 
 /**
- * Test DiasGeneral::check_for_mib
+ * Test LexMIB::check_for_mib
  */
-int test_diasgeneral_check_for_mib(int argc, char ** argv) {
+int test_lexmib_check_for_mib(int argc, char ** argv) {
 
     // Whether or not an error has occurred.
     bool error = false;

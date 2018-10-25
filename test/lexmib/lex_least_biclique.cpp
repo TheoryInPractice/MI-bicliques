@@ -11,12 +11,12 @@
 #include<vector>
 #include"../../src/graph/Graph.h"
 #include"../../src/graph/OrderedVertexSet.h"
-#include "../../src/algorithms/DiasGeneral.h"
+#include "../../src/algorithms/LexMIB.h"
 
 /**
- * Test DiasGeneral::lex_least_biclique
+ * Test LexMIB::lex_least_biclique
  */
-int test_diasgeneral_lex_least_biclique(int argc, char ** argv) {
+int test_lexmib_lex_least_biclique(int argc, char ** argv) {
 
     // Whether or not an error has occurred.
     bool error = false;

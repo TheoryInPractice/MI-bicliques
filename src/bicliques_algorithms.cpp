@@ -15,7 +15,7 @@
 #include <fstream>
 #include "graph/Graph.h"
 #include "algorithms/OCTMIB.h"
-#include "algorithms/DiasGeneral.h"
+#include "algorithms/LexMIB.h"
 #include "algorithms/SimpleCCs.h"
 #include "algorithms/SimpleOCT.h"
 
@@ -104,7 +104,7 @@ struct OutputHandler {
     bool is_it_bipartite = false;
 
     OutputOptions octmib_results;
-    DiasResults dias_results;
+    LexMIBResults lexmib_results;
 
     void start_timer() { this->begin = std::clock(); }
     void stop_timer() {
@@ -132,7 +132,7 @@ struct OutputHandler {
                 output_file << " " << this->num_vertices;
                 output_file << std::endl;
                 break;
-            case 'l':
+            case 'o':
                 // Ensure we output stats from prescribed decomposition,
                 // if it was provided.
                 if (octmib_results.size_left_given > 0) {
@@ -142,7 +142,7 @@ struct OutputHandler {
                     octmib_results.num_oct_edges = octmib_results.num_oct_edges_given;
                 }
 
-                output_file << "octmib " << this->input_file_path;
+                output_file << "OCT-MIB " << this->input_file_path;
                 output_file << " " << this->successful_termination;
                 output_file << " " << octmib_results.total_num_mibs << std::flush;
                 // std::fixed prevents scientific notation
@@ -174,10 +174,10 @@ struct OutputHandler {
                 output_file << " " << octmib_results.mib_limit_value  << std::flush;
                 output_file << std::endl;
                 break;
-            case 'd':
-                output_file << "dias " << this->input_file_path;
+            case 'l':
+                output_file << "LexMIB " << this->input_file_path;
                 output_file << " " << this->successful_termination;
-                output_file  << " " << dias_results.total_num_mibs;
+                output_file  << " " << lexmib_results.total_num_mibs;
                 // std::fixed prevents scientific notation
                 output_file << std::fixed << " " << this->elapsed_time;
                 output_file << " " << this->num_edges;
@@ -218,15 +218,6 @@ int main(int argc, char ** argv) {
     signal(SIGINT, timeoutHandler);
     signal(SIGALRM, timeoutHandler);
     signal(SIGQUIT, timeoutHandler);
-    /**
-    * Requirements:
-    *   a -- algorithm (choices are d for dias and l for octmib)
-    *   i -- input file (including directory path).
-    *
-    * Options:
-    *   o -- oct decomposition file (including directory path). For OCTMIB.
-    *   l -- log file for recording results (include directory path).
-    */
 
     std::string print_results_path;
     std::string oct_file_path;
@@ -281,7 +272,7 @@ int main(int argc, char ** argv) {
     }
 
     if (help_flag) {
-        std::cout << "usage: bicliques -a ALGORITHM: d l c b ";
+        std::cout << "usage: bicliques -a ALGORITHM: l o c b ";
         std::cout << "-i PATH_TO_INPUT_FILE ";
         std::cout << "[-o PATH_TO_OCT_FILE] ";
         std::cout << "[-l PATH_TO_LOG_FILE] [-h] [-c] ";
@@ -290,8 +281,8 @@ int main(int argc, char ** argv) {
 
         std::cout << "Bicliques algorithms suite.\n\n";
         std::cout << "required arguments:\n";
-        std::cout << "\tALGORITHM             which algorithm to use: d (dias), ";
-        std::cout << "l (octmib), c (counts # CCs), b (checks if bipartite)\n";
+        std::cout << "\tALGORITHM             which algorithm to use: l (LexMIB), ";
+        std::cout << "o (OCT-MIB), c (counts # CCs), b (checks if bipartite)\n";
         std::cout << "\tPATH_TO_INPUT_FILE    directory and filename of input graph\n\n";
         std::cout << "optional arguments:\n";
         std::cout << "\t-h                    show this help message and exit\n";
@@ -308,7 +299,7 @@ int main(int argc, char ** argv) {
 
     // Check for algorithm
     if (output_tracker.which_algorithm != "l" &&
-        output_tracker.which_algorithm != "d" &&
+        output_tracker.which_algorithm != "o" &&
         output_tracker.which_algorithm != "b" &&
         output_tracker.which_algorithm != "c") {
         std::cout << "ERROR::BICLIQUES incorrect algorithm specified: ";
@@ -335,7 +326,7 @@ int main(int argc, char ** argv) {
         std::cout << "ERROR::BICLIQUES input file not found.";
         std::cout << std::endl;
         error = 0;
-        return error;
+        return error;std::cout << "# Running algorithm " << output_tracker.which_algorithm << std::endl;
     }
     else {
         Graph dummy(output_tracker.input_file_path, Graph::FILE_FORMAT::adjlist);
@@ -375,19 +366,21 @@ int main(int argc, char ** argv) {
     }
     output_tracker.alg_char = output_tracker.which_algorithm[0];
     switch (output_tracker.alg_char) {
-        case 'l':  // run OCTMIB
+        case 'o':  // run OCTMIB
+            std::cout << "# Starting algorithm OCT-MIB" << std::endl;
             if (print_results_path!=std::string("")) {
                 output_tracker.octmib_results.turn_on_print_mode(print_results_path);
                 output_tracker.octmib_results.count_only_mode = count_only_mode;
             }
             octmib(output_tracker.octmib_results, input_g, oct_set, left_partition);
             break;
-        case 'd':  // run DIAS
+        case 'l':  // run LexMIB
+            std::cout << "# Starting algorithm LexMIB" << std::endl;
             if (print_results_path!=std::string("")) {
-                output_tracker.dias_results.turn_on_print_mode(print_results_path);
-                output_tracker.dias_results.count_only_mode = count_only_mode;
+                output_tracker.lexmib_results.turn_on_print_mode(print_results_path);
+                output_tracker.lexmib_results.count_only_mode = count_only_mode;
             }
-            dias_general(output_tracker.dias_results, input_g);
+            lexmib(output_tracker.lexmib_results, input_g);
             break;
         case 'c':  // just count connected components
             {

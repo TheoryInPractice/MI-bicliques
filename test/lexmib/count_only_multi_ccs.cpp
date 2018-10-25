@@ -8,13 +8,13 @@
 
 #include<iostream>
 #include<vector>
-#include"../../src/algorithms/DiasGeneral.h"
+#include"../../src/algorithms/LexMIB.h"
 #include"../ground_truth_mibs.h"
 
 /**
- * Test the full DiasGeneral.cpp algorithm
+ * Test the full LexMIB.cpp algorithm
  */
-int test_diasgeneral_count_only_multi_ccs(int argc, char ** argv) {
+int test_lexmib_count_only_multi_ccs(int argc, char ** argv) {
 
     // Whether or not an error has occurred.
     bool error = false;
@@ -52,15 +52,15 @@ int test_diasgeneral_count_only_multi_ccs(int argc, char ** argv) {
 
         Graph subgraph = input_g.subgraph(ordering);
 
-        DiasResults diasresults;
-        diasresults.count_only_mode = true;
-        dias_general(diasresults, subgraph);
+        LexMIBResults lexmibresults;
+        lexmibresults.count_only_mode = true;
+        lexmib(lexmibresults, subgraph);
 
-        size_t computed_number_mibs = diasresults.total_num_mibs;
+        size_t computed_number_mibs = lexmibresults.total_num_mibs;
 
         // Check we found correct number of mib
         if (GROUND_TRUTH_NUMBER_MIBS != computed_number_mibs) {
-            std::cout << "ERROR: dias_general count_only_mode found wrong number of mibs: ";
+            std::cout << "ERROR: lexmib count_only_mode found wrong number of mibs: ";
             std::cout << computed_number_mibs << " instead of correct number ";
             std::cout << GROUND_TRUTH_NUMBER_MIBS << std::endl;
             error=true;

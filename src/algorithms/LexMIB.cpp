@@ -1,8 +1,8 @@
 /**
-* This implements our modified version of the algorithm of Dias et al. for
-* enumerating all maximal induced bicliques in a graph in lexicographical order.
-* See our associated paper for an explanation of how our modified version
-* differs from the original algorithm of Dias et al. presented here:
+* This implements LexMIB, our modified version of the algorithm of Dias et al.
+* for enumerating all maximal induced bicliques in a graph in lexicographical
+* order. See our associated paper for an explanation of how our modified
+* version differs from the original algorithm of Dias et al. presented here:
 *
 *   V. Dias, C. De Figueiredo, and J. Szwarcfiter, Generating bicliques of a
 *   graph in lexicographic order, Theoretical Computer Science, 337 (2005),
@@ -18,7 +18,7 @@
 *   This code assumes no node is isolated.
 */
 
-#include "DiasGeneral.h"
+#include "LexMIB.h"
 #include "SimpleCCs.h"
 
 
@@ -66,7 +66,7 @@ BicliqueLite lex_least_biclique(const Graph & g,
     // connected to any nodes, and add those to Y.
     if (set_y.size() == 0) {
         // Compute intersection of neighborshoods of each v in set_x
-        // Note: this is the same as F(X) in Dias, the "focus" of X.
+        // Note: this is the same as F(X) in Dias et al paper, the "focus" of X.
         OrderedVector set_x_neighb_intersection(g.get_neighborhood_intersection(set_x));
 
         // If neighborhood intersection of set_x is empty, return empty
@@ -185,7 +185,7 @@ void check_for_mib(const Graph& g,
                     }
                 }
             }
-        }
+        }// END for loop over ell not in (x,y)
 
         if (no_extension_exists) {
 
@@ -218,11 +218,11 @@ void check_for_mib(const Graph& g,
 
 
 /**
- * Runs the algorithm of Dias et al assuming the input graph is connected.
- * DiasResults object is for tracking statistics related to the algorithm's
+ * Runs LexMIB assuming the input graph is connected.
+ * LexMIBResults object is for tracking statistics related to the algorithm's
  * performance.
  */
-void dias_general_cc(DiasResults & diasresults,
+void lexmib_cc(LexMIBResults & lexmibresults,
                      const Graph & g) {
 
     // Set up data structures:
@@ -246,7 +246,7 @@ void dias_general_cc(DiasResults & diasresults,
         auto current_least_bic = mib_archive.top();
         mib_archive.pop();
 
-        diasresults.push_back(current_least_bic);
+        lexmibresults.push_back(current_least_bic);
 
         // Prep lookup table (note: this could be replaced with a hashtable,
         // but this would only be more efficient if the number of vertices
@@ -295,11 +295,11 @@ void dias_general_cc(DiasResults & diasresults,
 
 
 /**
- * Wrapper for MIB enumeration algorithm of Dias that first separates out
+ * Wrapper for MIB enumeration algorithm LexMIB that first separates out
  * connected components, runs the algorithm on each CC, and aggregates
  * the results.
  */
-void dias_general(DiasResults & diasresults, const Graph & g) {
+void lexmib(LexMIBResults & lexmibresults, const Graph & g) {
 
     // Determine connected components
     auto vector_of_ccs = simpleccs(g);
@@ -315,40 +315,40 @@ void dias_general(DiasResults & diasresults, const Graph & g) {
 
             // Isolated edges are MIBs
             if (vertex_subset.size() == 2) {
-                diasresults.relabeling_mode = false;
+                lexmibresults.relabeling_mode = false;
                 BicliqueLite temp((std::vector<size_t>){vertex_subset.front()},
                              (std::vector<size_t>){vertex_subset.back()});
-                diasresults.push_back(temp);
+                lexmibresults.push_back(temp);
                 continue;
             }
 
             Graph g_cc = g.subgraph(vertex_subset);
 
-            // Call main DIAS function
-            diasresults.turn_on_relabeling_mode(vertex_subset);
-            dias_general_cc(diasresults, g_cc);
+            // Call main LexMIB function
+            lexmibresults.turn_on_relabeling_mode(vertex_subset);
+            lexmib_cc(lexmibresults, g_cc);
 
         }
     }
     else {
-        dias_general_cc(diasresults, g);
+        lexmib_cc(lexmibresults, g);
     }
 
-    diasresults.close_results();
+    lexmibresults.close_results();
 
 }
 
 /**
 * Given input graph g, output a vector containing all maximal induced bicliques
-* in g, in lexicographic order. Uses our modified version of the algorithm
-* of Dias et al.
+* in g, in lexicographic order. Uses LexMIB, our modified version of the
+* algorithm of Dias et al.
 *
 * This is the most general-purpose, easy-to-use function -- we recommend using
 * this function unless you need specific information provided by the above
 * functions.
 */
-std::vector<BicliqueLite> dias_general(const Graph & g) {
-    DiasResults diasresults;
-    dias_general(diasresults, g);
-    return diasresults.mibs_computed;
+std::vector<BicliqueLite> lexmib(const Graph & g) {
+    LexMIBResults lexmibresults;
+    lexmib(lexmibresults, g);
+    return lexmibresults.mibs_computed;
 }

@@ -10,7 +10,7 @@ the code has not been tested with older versions of Cmake or Make.
 
 After those installations, run the following commands from the repo root directory:
 1. run `cmake .` to generate the Makefile and necessary auxiliary files.
-4. run `make all` to compile the code and testing suite.
+4. run `make` to compile the code and testing suite.
 5. run `ctest` to run the testing suite. The 98 tests take under a minute total, on a standard desktop machine, and no tests should fail.
 
 ## Command line usage
@@ -19,7 +19,7 @@ Runs the Toboggan algorithm on every instance provided in the input file (for fi
 see below or consider the example file provided in `testdata`).
 
 Required arguments:
-  * `-a` --- specify which algorithm to run. Options: `l` (OCT-MIB), `d` (the method of Dias et al.)
+  * `-a` --- specify which algorithm to run. Options for biclique enumeration: `o` (our algorithm OCT-MIB), `l` (LexMIB). Options that are not biclique enumerators: `b` (test whether the graph is bipartite via BFS) and `c` (counts the number of connected components via BFS).
   * `-i` --- specify the path to and filename of a graph (see "Data Formatting" below)
 
 Optional arguments for both Dias and OCT-MIB:
@@ -32,19 +32,20 @@ Optional arguments for both Dias and OCT-MIB:
 Optional argument for just OCT-MIB:
   * `-o [DECOMPOSITION_PATH]`  --- Specify the path to and filename of an OCT-decomposition for the input graph (see "data Formatting" below).
 
-### Example usage
+### Example usage: OCT-MIB
 
 The call
 ```
-$>./bicliques -a l -i ./test/test_graph.txt -p octmib_results.txt
+$>./bicliques -a o -i ./test/test_graph.txt -p octmib_results.txt
 ```
 runs our algorithm OCT-MIB on a 7 node graph in our testing suite, and outputs the bicliques found in a file named `octmib_results.txt`.
 The output to the screen should look like this:
 ```
-# Running algorithm l
+# Running algorithm o
 # Reading graph from ./test/test_graph.txt
 # Printing MIBs to octmib_results.txt
-# Graph has 1 connected components. CC ran in 7e-06
+# Starting algorithm OCT-MIB
+# Graph has 1 connected components. CC ran in 3e-06
 #	OCT in CC has size 2
 #	L in CC has size 3
 #	R in CC has size 2
@@ -59,6 +60,33 @@ and the file `octmib_results.txt` should look like this:
 1,3,5,
 3,5,6,
 ```
+
+
+### Example usage: LexMIB
+
+The call
+```
+$>./bicliques -a l -i ./test/test_graph.txt -p lexmib_results.txt
+```
+runs the algorithm LexMIB on a 7 node graph in our testing suite, and outputs the bicliques found in a file named `lexmib_results.txt`.
+The output to the screen should look like this:
+```
+# Running algorithm l
+# Reading graph from ./test/test_graph.txt
+# Printing MIBs to lexmib_results.txt
+# Starting algorithm LexMIB
+```
+and the file `lexmib_results.txt` should look like this:
+```
+0,1,3,
+0,2,4,
+1,2,3,4,
+1,3,5,
+2,3,4,6,
+2,4,5,
+3,5,6,
+```
+
 
 ## Data formatting
 
