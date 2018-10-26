@@ -91,6 +91,11 @@ and the file `lexmib_results.txt` should look like this:
 3,5,6,
 ```
 
+## Reproducing experiments
+
+The subdirectory `reproducibility/` contains codes for generating the datasets
+used in the experiments of our accompanying paper.
+
 
 ## Data formatting
 
