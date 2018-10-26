@@ -77,6 +77,15 @@ struct LexMIBResults {
 };
 
 
+// Defining ordering operator for the sorting aspect of BicliqueArchive
+class BicliqueLexCompare
+{
+public:
+    inline bool operator() (BicliqueLite & mib1, BicliqueLite & mib2) {
+        return (mib1.get_all_vertices_persistent() > mib2.get_all_vertices_persistent()) ;
+    }
+};
+
 /**
  * This class combines a priority queue (min heap) for quick access to the
  * lex least biclique stored, with a hashtable for efficiently checking whether
@@ -86,8 +95,14 @@ struct LexMIBResults {
 class BicliqueArchive {
     private:
 
+        // NOTE:
+        // This sorting operation was mistakenly used in some experiments. We
+        // believe it shouldn't affect runtime, but does affect the ordering.
         // std::priority_queue<BicliqueLite, std::vector<BicliqueLite>, std::less<BicliqueLite> > mib_heap;
-        std::priority_queue<BicliqueLite, std::vector<BicliqueLite>, std::greater<BicliqueLite> > mib_heap;
+
+        // This sorting operation is the correct one to use.
+        std::priority_queue<BicliqueLite, std::vector<BicliqueLite>, BicliqueLexCompare > mib_heap;
+
         std::unordered_map<std::string,bool> map;
 
     public:
