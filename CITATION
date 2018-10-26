@@ -1,0 +1,47 @@
+*********
+Citations
+*********
+
+Software Citation
+=================
+
+If you use the MI-bicliques software, you must cite:
+
+E. Horton, K. Kloster, B.D. Sullivan, and A. van der Poel, MI-bicliques (2018).
+
+..code-block::tex
+
+                  @misc{MI_bicliques_v1.0,
+                    author       = {Eric Horton and
+                                    Kyle Kloster and
+                                    Blair D.~Sullivan and
+                                    Andrew van der Poel},
+                    title        = {MI-bicliques: Version 1.0},
+                    month        = oct,
+                    year         = 2018,
+                    url          = {https://github.com/TheoryInPractice/MI-bicliques}
+                  }
+
+If you use any of our published algorithms you should *also*
+cite the relevant paper(s) as directed below.
+
+===========================================================
+
+The methods in lib:MI-bicliques (which are used in the main pipeline :program:`biclique_algorithms.cpp`) implement the maximal induced biclique enumeration algorithm described in:
+
+   E. Horton, K. Kloster, B.D. Sullivan, and A. van der Poel. (2018)
+   Mining Maximal Induced Bicliques using Odd Cycle Transversals.
+   ArXiv preprint forthcoming.
+
+
+.. code-block:: tex
+
+@article{mibicliques2018,
+  author    = {
+               Eric Horton and
+               Kyle Kloster and
+               Blair D. Sullivan and
+               Andrew van der Poel},
+  title     = {Mining Maximal Induced Bicliques using Odd Cycle Transversals},
+  year      = {2018}
+}
