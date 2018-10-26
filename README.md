@@ -1,8 +1,18 @@
 # MI-bicliques
 Algorithms for enumerating maximal induced bicliques. OCT-MIB is designed for graphs which are "near bipartite" described in Kloster et al. 2018+; LexMIB is an improved version of the algorithm described in Dias et al. 2005.
 
+## Table of Contents
 
-## Compiling the code
+README
+* [Installation](#installation)
+* [Command line usage](#command-line-usage)
+* [Reproducing results from paper](#reproducing-results-from-paper)
+* [Data formatting](#data-formatting)
+* [Citation information](#citation-information)
+* [License](#license)
+* [Acknowledgements](#acknowledgements)
+
+## Installation
 
 The MI-bicliques code-base is set up for easy compilation using Cmake and Makefile.
 Before starting this compilation process, check that Cmake version 3.9.0 or newer is installed, and GNU Make 4.1 or newer is installed;
@@ -91,7 +101,7 @@ and the file `lexmib_results.txt` should look like this:
 3,5,6,
 ```
 
-## Reproducing experiments
+## Reproducing results from paper
 
 The subdirectory `reproducibility/` contains codes for generating the datasets
 used in the experiments of our accompanying paper.
