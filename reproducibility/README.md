@@ -20,7 +20,7 @@ The code `OCTgenerator.c` takes in 9 arguments in the following order:
 
 * m - the number of nodes in the left partition
 * n - the number of nodes in the right partition
-* mean - the expected average number of neighbors in the left partition over the right partition nodes
+* mean - the expected average number of neighbors in the left partition over the right partition nodes (from 0 to m)
 * std - the expected standard deviation of the number of neighbors in the left partition over the right partition nodes
 * oct - the number of nodes in the OCT set
 * octoct - the expected edge density within the OCT set (from 0 to 1)
@@ -30,7 +30,7 @@ The code `OCTgenerator.c` takes in 9 arguments in the following order:
 
 [1] coefficient of variance is the standard deviation divided by the mean
 
-The code `OCTgenerator_pm.c` takes in the same arguments, but always outputs an oct decomposition which is a perfect matching.
+The code `OCTgenerator_pm.c` takes in the same arguments, but always outputs an oct decomposition which is a perfect matching, thus it ignores the argument octoct.
 
 
 ### Example usage
