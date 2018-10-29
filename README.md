@@ -14,19 +14,16 @@ README
 
 ## Installation
 
-The MI-bicliques code-base is set up for easy compilation using Cmake and Makefile.
+The MI-bicliques code-base is set up for compilation using Cmake and Makefile.
 Before starting this compilation process, check that Cmake version 3.9.0 or newer is installed, and GNU Make 4.1 or newer is installed;
 the code has not been tested with older versions of Cmake or Make.
 
 After those installations, run the following commands from the repo root directory:
 1. run `cmake .` to generate the Makefile and necessary auxiliary files.
 4. run `make` to compile the code and testing suite.
-5. run `ctest` to run the testing suite. The 98 tests take under a minute total, on a standard desktop machine, and no tests should fail.
+5. run `ctest` to run the testing suite. The 98 tests take well under a minute total on a standard desktop machine, and no tests should fail.
 
 ## Command line usage
-
-Runs the Toboggan algorithm on every instance provided in the input file (for file format specifications,
-see below or consider the example file provided in `testdata`).
 
 Required arguments:
   * `-a` --- specify which algorithm to run. Options for biclique enumeration: `o` (our algorithm OCT-MIB), `l` (LexMIB). Options that are not biclique enumerators: `b` (test whether the graph is bipartite via BFS) and `c` (counts the number of connected components via BFS).
@@ -40,7 +37,7 @@ Optional arguments for both Dias and OCT-MIB:
   * `-l [FILE_PATH]` --- Print to file some statistics about the performance of the algorithm, including the runtime of algorithm components and the number of MIBs found. Specify the path to and name of the file where the results should be stored.
 
 Optional argument for just OCT-MIB:
-  * `-o [DECOMPOSITION_PATH]`  --- Specify the path to and filename of an OCT-decomposition for the input graph (see "data Formatting" below).
+  * `-o [DECOMPOSITION_PATH]`  --- Specify the path to and filename of an OCT-decomposition for the input graph (see [Data formatting](#data-formatting) below).
 
 ### Example usage: OCT-MIB
 
@@ -103,7 +100,7 @@ and the file `lexmib_results.txt` should look like this:
 
 ## Reproducing results from paper
 
-The subdirectory `reproducibility/` contains codes for generating the datasets
+The subdirectory `reproducibility/` contains code for generating the datasets
 used in the experiments of our accompanying paper.
 
 
@@ -120,13 +117,11 @@ The code will infer the third partition given the first two.
 
 ## Citation information
 
-This is *pre-publication* code; a manuscript is in preparation.
-Please contact the authors for the current citation information if you
-wish to use it and cite it.
+**Important**: Toboggan is *research software*, so you should cite us when you use it in scientific publications! Please see the [CITATION](./CITATION) file for citation information.
 
 ## License
 
-MI-bicliques is released under the BSD license; see the LICENSE file.
+MI-bicliques is released under the BSD license; see the [LICENSE](./LICENSE) file.
 Distribution, modification and redistribution, and incorporation into other software is allowed.
 
 
