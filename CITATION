@@ -43,5 +43,7 @@ The methods in lib:MI-bicliques (which are used in the main pipeline :program:`b
                Blair D. Sullivan and
                Andrew van der Poel},
   title     = {Mining Maximal Induced Bicliques using Odd Cycle Transversals},
-  year      = {2018}
+  volume    = {abs/1810.11421},
+  year      = {2018},
+  url       = {https://arxiv.org/abs/1810.11421},
 }
