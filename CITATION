@@ -8,6 +8,7 @@ Software Citation
 If you use the MI-bicliques software, you must cite:
 
 E. Horton, K. Kloster, B.D. Sullivan, and A. van der Poel, MI-bicliques (2018).
+MI-bicliques: Version 1.0. Zenodo. 10.5281/zenodo.1238879
 
 ..code-block::tex
 
@@ -19,7 +20,8 @@ E. Horton, K. Kloster, B.D. Sullivan, and A. van der Poel, MI-bicliques (2018).
                     title        = {MI-bicliques: Version 1.0},
                     month        = oct,
                     year         = 2018,
-                    url          = {https://github.com/TheoryInPractice/MI-bicliques}
+                    doi          = {10.5281/zenodo.1238879},
+                    url          = {https://doi.org/10.5281/zenodo.1238879}
                   }
 
 If you use any of our published algorithms you should *also*
