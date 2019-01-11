@@ -16,6 +16,7 @@
 #include "graph/Graph.h"
 #include "algorithms/OCTMIB.h"
 #include "algorithms/LexMIB.h"
+#include "algorithms/NonLexMIB.h"
 #include "algorithms/SimpleCCs.h"
 #include "algorithms/SimpleOCT.h"
 
@@ -105,6 +106,7 @@ struct OutputHandler {
 
     OutputOptions octmib_results;
     LexMIBResults lexmib_results;
+	NonLexMibResults nonlexmib_results;
 
     void start_timer() { this->begin = std::clock(); }
     void stop_timer() {
@@ -178,6 +180,17 @@ struct OutputHandler {
                 output_file << "LexMIB " << this->input_file_path;
                 output_file << " " << this->successful_termination;
                 output_file  << " " << lexmib_results.total_num_mibs;
+                // std::fixed prevents scientific notation
+                output_file << std::fixed << " " << this->elapsed_time;
+                output_file << " " << this->num_edges;
+                output_file << " " << this->num_vertices;
+                output_file << " " << this->time_out_value;
+                output_file << std::endl;
+                break;
+			case 'n':
+                output_file << "NonLexMIB " << this->input_file_path;
+                output_file << " " << this->successful_termination;
+                output_file  << " " << nonlexmib_results.total_num_mibs;
                 // std::fixed prevents scientific notation
                 output_file << std::fixed << " " << this->elapsed_time;
                 output_file << " " << this->num_edges;
@@ -301,7 +314,8 @@ int main(int argc, char ** argv) {
     if (output_tracker.which_algorithm != "l" &&
         output_tracker.which_algorithm != "o" &&
         output_tracker.which_algorithm != "b" &&
-        output_tracker.which_algorithm != "c") {
+        output_tracker.which_algorithm != "c" &&
+		output_tracker.which_algorithm != "n") {
         std::cout << "ERROR::BICLIQUES incorrect algorithm specified: ";
         std::cout << output_tracker.which_algorithm << std::endl;
         error = 0;
@@ -381,6 +395,14 @@ int main(int argc, char ** argv) {
                 output_tracker.lexmib_results.count_only_mode = count_only_mode;
             }
             lexmib(output_tracker.lexmib_results, input_g);
+            break;
+        case 'n':
+            std::cout << "# Starting algorithm NonLexMIB" << std::endl;
+            if (print_results_path!=std::string("")) {
+                output_tracker.nonlexmib_results.turn_on_print_mode(print_results_path);
+                output_tracker.nonlexmib_results.count_only_mode = count_only_mode;
+            }
+            nonlexmib(output_tracker.nonlexmib_results, input_g);
             break;
         case 'c':  // just count connected components
             {
