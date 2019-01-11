@@ -23,7 +23,7 @@
 * related to the performance of the algorithm like runtime, and the bicliques
 * found.
 */
-struct NonNonLexMIBResults {
+struct NonLexMIBResults {
 
     std::string print_mibs_dest = std::string("");
     bool print_mode = false;
@@ -101,7 +101,7 @@ class BicliqueArchiveNonLex {
         // std::priority_queue<BicliqueLite, std::vector<BicliqueLite>, std::less<BicliqueLite> > mib_heap;
 
         // This sorting operation is the correct one to use.
-        std::priority_queue<BicliqueLite, std::vector<BicliqueLite>, BicliqueLexCompare > mib_heap;
+        std::priority_queue<BicliqueLite, std::vector<BicliqueLite>, BicliqueNonLexCompare > mib_heap;
 
         std::unordered_map<std::string,bool> map;
 
@@ -139,10 +139,10 @@ void check_for_mib_nonlex(const Graph & g,
 
 
 /**
-* Given a graph and NonLexMIBResults object, this updates lexmibresults to contain
+* Given a graph and NonLexMIBResults object, this updates nonlexmibresults to contain
 * a number of statistics of the graph and the performance of the algorithm.
 */
-void nonlexmib(NonLexMIBResults & lexmibresults, const Graph & g);
+void nonlexmib(NonLexMIBResults & nonlexmibresults, const Graph & g);
 
 /**
 * Given a graph this simply computes and outputs a vector of bicliques found.
@@ -152,7 +152,7 @@ std::vector<BicliqueLite> nonlexmib(const Graph & g);
 /**
 * Intended for internal use; this function assumes the input graph is connected.
 */
-void nonlexmib_cc(NonLexMIBResults & lexmibresults,
+void nonlexmib_cc(NonLexMIBResults & nonlexmibresults,
                      const Graph & g);
 
 

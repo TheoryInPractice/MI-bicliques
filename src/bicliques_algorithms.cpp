@@ -106,7 +106,7 @@ struct OutputHandler {
 
     OutputOptions octmib_results;
     LexMIBResults lexmib_results;
-	NonLexMibResults nonlexmib_results;
+    NonLexMIBResults nonlexmib_results;
 
     void start_timer() { this->begin = std::clock(); }
     void stop_timer() {

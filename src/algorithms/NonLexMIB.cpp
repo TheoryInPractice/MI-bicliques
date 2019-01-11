@@ -222,7 +222,7 @@ void check_for_mib_nonlex(const Graph& g,
  * NonLexMIBResults object is for tracking statistics related to the algorithm's
  * performance.
  */
-void nonlexmib_cc(NonLexMIBResults & NonLexMIBResults,
+void nonlexmib_cc(NonLexMIBResults & nonlexmibresults,
                      const Graph & g) {
 
     // Set up data structures:
@@ -246,7 +246,7 @@ void nonlexmib_cc(NonLexMIBResults & NonLexMIBResults,
         auto current_least_bic = mib_archive.top();
         mib_archive.pop();
 
-        NonLexMIBResults.push_back(current_least_bic);
+        nonlexmibresults.push_back(current_least_bic);
 
         // Prep lookup table (note: this could be replaced with a hashtable,
         // but this would only be more efficient if the number of vertices
@@ -299,7 +299,7 @@ void nonlexmib_cc(NonLexMIBResults & NonLexMIBResults,
  * connected components, runs the algorithm on each CC, and aggregates
  * the results.
  */
-void nonlexmib(NonLexMIBResults & NonLexMIBResults, const Graph & g) {
+void nonlexmib(NonLexMIBResults & nonlexmibresults, const Graph & g) {
 
     // Determine connected components
     auto vector_of_ccs = simpleccs(g);
@@ -315,26 +315,26 @@ void nonlexmib(NonLexMIBResults & NonLexMIBResults, const Graph & g) {
 
             // Isolated edges are MIBs
             if (vertex_subset.size() == 2) {
-                NonLexMIBResults.relabeling_mode = false;
+                nonlexmibresults.relabeling_mode = false;
                 BicliqueLite temp((std::vector<size_t>){vertex_subset.front()},
                              (std::vector<size_t>){vertex_subset.back()});
-                NonLexMIBResults.push_back(temp);
+                nonlexmibresults.push_back(temp);
                 continue;
             }
 
             Graph g_cc = g.subgraph(vertex_subset);
 
             // Call main LexMIB function
-            NonLexMIBResults.turn_on_relabeling_mode(vertex_subset);
-            nonlexmib_cc(NonLexMIBResults, g_cc);
+            nonlexmibresults.turn_on_relabeling_mode(vertex_subset);
+            nonlexmib_cc(nonlexmibresults, g_cc);
 
         }
     }
     else {
-        nonlexmib_cc(NonLexMIBResults, g);
+        nonlexmib_cc(nonlexmibresults, g);
     }
 
-    NonLexMIBResults.close_results();
+    nonlexmibresults.close_results();
 
 }
 
@@ -348,7 +348,7 @@ void nonlexmib(NonLexMIBResults & NonLexMIBResults, const Graph & g) {
 * functions.
 */
 std::vector<BicliqueLite> nonlexmib(const Graph & g) {
-    NonLexMIBResults NonLexMIBResults;
-    nonlexmib(NonLexMIBResults, g);
-    return NonLexMIBResults.mibs_computed;
+    NonLexMIBResults nonlexmibresults;
+    nonlexmib(nonlexmibresults, g);
+    return nonlexmibresults.mibs_computed;
 }
