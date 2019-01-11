@@ -117,7 +117,7 @@ The code will infer the third partition given the first two.
 
 ## Citation information
 
-**Important**: Toboggan is *research software*, so you should cite us when you use it in scientific publications! Please see the [CITATION](./CITATION) file for citation information.
+**Important**: MI-bicliques is *research software*, so you should cite us when you use it in scientific publications! Please see the [CITATION](./CITATION) file for citation information.
 
 ## License
 
