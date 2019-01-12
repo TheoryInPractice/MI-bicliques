@@ -133,9 +133,7 @@ void check_for_mib_nonlex(const Graph& g,
     // [1] intersect(X_j, N_j) not empty
     // [2] intersect(Y_j, N_j^c) not empty
     // [3] Y_j empty
-    if (!g.is_completely_independent_from(idx, x_iter)
-        || !g.is_completely_connect_to(idx, y_iter)
-        || y_iter.size() == 0) {
+
 
         // Compute altered versions of x and y -> x' and y'
         OrderedVector x_edited = x_iter;
@@ -149,71 +147,19 @@ void check_for_mib_nonlex(const Graph& g,
         for (size_t u: x_edited) lookup_table[u] = 1;
         for (size_t u: y_edited) lookup_table[u] = 1;
 
-        // check if B' = (x', y') extends to a biclique for some ell not in (x,y)
-        bool no_extension_exists = true;
-        for (size_t ell=0; ell<=idx; ell++) {
+        
 
-            // Skip ell in B(x,y) intersect [ 1 , ... , idx ]
-            if (lookup_table[ell] == 1) continue;
 
-            // check if ell can be added to either side of biclique
-            if (g.is_completely_connect_to(ell, x_edited)
-                && g.is_completely_independent_from(ell, y_edited)) {
-                no_extension_exists = false;
+	auto this_mib = nonlex_least_biclique(g, x_edited, y_edited);
 
-                break;
-            }
+	// If mib!=0 and not in the archive, add to archive and heap
+	if ((this_mib.size() != 0) &&
+	(!mib_archive.has_biclique(this_mib)) ) {
+		mib_archive.push(this_mib);
+	}
+	   
 
-            // Handle y_edited == 0 as a special case
-            if (g.is_completely_connect_to(ell, y_edited) // returns true for empty y_edited
-                && g.is_completely_independent_from(ell, x_edited)) {
 
-                if (y_edited.size() !=0 ) {
-                    no_extension_exists = false;
-                    break;
-                }
-                else {
-
-                    OrderedVector x_edited_ell = x_edited;
-                    x_edited_ell.bubble_sort(ell);
-
-                    auto temp = g.get_neighborhood_intersection(x_edited_ell, true);
-                    if (temp.size() > 0) {
-                        no_extension_exists = false;
-                        ell = idx + 1;
-                        break;
-                    }
-                }
-            }
-        }// END for loop over ell not in (x,y)
-
-        if (no_extension_exists) {
-
-            auto this_mib = nonlex_least_biclique(g, x_edited, y_edited);
-
-            // If mib!=0 and not in the archive, add to archive and heap
-            if ((this_mib.size() != 0) &&
-            (!mib_archive.has_biclique(this_mib)) ) {
-                mib_archive.push(this_mib);
-            }
-            else {  // if nonlex_least_biclique returns empty-set
-                for (size_t v: neighb_of_idx) {
-
-                    OrderedVector temp_set = x_edited;
-                    temp_set.vector_intersect_neighborhood(g, v);
-
-                    BicliqueLite temp_mib = nonlex_least_biclique(g,
-                                                       temp_set,
-                                                       OrderedVector((std::vector<size_t>) {v}));
-                    if ((temp_mib.size() != 0) &&
-                    (!mib_archive.has_biclique(temp_mib)) ) {
-
-                        mib_archive.push(temp_mib);
-                    }
-                }
-            }
-        } // End "if no extension exists"
-    }
 }
 
 
