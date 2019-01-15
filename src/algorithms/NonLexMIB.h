@@ -11,6 +11,7 @@
 
 #include <fstream>
 #include <queue>
+#include <list>
 #include <vector>
 #include "../graph/BicliqueLite.h"
 #include "../graph/Graph.h"
