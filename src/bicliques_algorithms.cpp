@@ -16,6 +16,7 @@
 #include "graph/Graph.h"
 #include "algorithms/OCTMIB.h"
 #include "algorithms/LexMIB.h"
+#include "algorithms/MICA.h"
 #include "algorithms/SimpleCCs.h"
 #include "algorithms/SimpleOCT.h"
 
@@ -104,6 +105,7 @@ struct OutputHandler {
     bool is_it_bipartite = false;
 
     OutputOptions octmib_results;
+    OutputOptions mica_results;
     LexMIBResults lexmib_results;
 
     void start_timer() { this->begin = std::clock(); }
@@ -282,7 +284,7 @@ int main(int argc, char ** argv) {
         std::cout << "Bicliques algorithms suite.\n\n";
         std::cout << "required arguments:\n";
         std::cout << "\tALGORITHM             which algorithm to use: l (LexMIB), ";
-        std::cout << "o (OCT-MIB), c (counts # CCs), b (checks if bipartite)\n";
+        std::cout << "o (OCT-MIB), c (counts # CCs), b (checks if bipartite), m (MICA) \n";
         std::cout << "\tPATH_TO_INPUT_FILE    directory and filename of input graph\n\n";
         std::cout << "optional arguments:\n";
         std::cout << "\t-h                    show this help message and exit\n";
@@ -301,7 +303,8 @@ int main(int argc, char ** argv) {
     if (output_tracker.which_algorithm != "l" &&
         output_tracker.which_algorithm != "o" &&
         output_tracker.which_algorithm != "b" &&
-        output_tracker.which_algorithm != "c") {
+        output_tracker.which_algorithm != "c" &&
+		output_tracker.which_algorithm != "m") {
         std::cout << "ERROR::BICLIQUES incorrect algorithm specified: ";
         std::cout << output_tracker.which_algorithm << std::endl;
         error = 0;
@@ -394,6 +397,14 @@ int main(int argc, char ** argv) {
             if (temp_oct.size() == 0) output_tracker.is_it_bipartite = true;
             else output_tracker.is_it_bipartite = false;
             break;
+        case 'm': //MICA
+        	std::cout << "# Starting algorithm OCT-MIB" << std::endl;
+        	if (print_results_path!=std::string("")) {
+        		output_tracker.octmib_results.turn_on_print_mode(print_results_path);
+        	    output_tracker.octmib_results.count_only_mode = count_only_mode;
+        	}
+        	mica_cc(output_tracker.mica_results, input_g);
+        	break;
     }
 
     output_tracker.successful_termination = true;
