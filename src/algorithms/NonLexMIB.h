@@ -96,7 +96,7 @@ class BicliqueArchiveNonLex {
     private:
 
         // Unlike LexMIB, we do not need to use a priority_queue because we do not care about order
-        std::queue<BicliqueLite, std::vector<BicliqueLite> > mib_heap;
+        std::queue<BicliqueLite, std::list<BicliqueLite> > mib_heap;
 
         std::unordered_map<std::string,bool> map;
 
@@ -114,7 +114,7 @@ class BicliqueArchiveNonLex {
             mib_heap.push(mib);
         }
 
-        inline BicliqueLite top() { return mib_heap.top(); }
+        inline BicliqueLite top() { return mib_heap.front(); }
         inline void pop() { mib_heap.pop(); }
 
 };
