@@ -83,10 +83,10 @@ void mica_cc(OutputOptions & mica_results, const Graph & g) {
 	std::set<BicliqueLite> C0;
 	size_t num_vertices = g.get_num_vertices();
 	for (size_t v = 0; v < num_vertices; v++) {
-		std::set<size_t> left, right, temp;
+		std::vector<size_t> left, right, temp;
 		right = g.get_neighbors_vector(v);
 		left = g.get_neighborhood_intersection(right, false);
-		left.insert(v);
+		left.push_back(v);
 		C0.insert(BicliqueLite(left, right));
 	}
 	mica_initialized(mica_results, g, C0, std::set<BicliqueLite>());
@@ -95,7 +95,7 @@ void mica_cc(OutputOptions & mica_results, const Graph & g) {
 void mica_initialized(OutputOptions & mica_results, const Graph & g, std::set<BicliqueLite> C0, std::set<BicliqueLite> C) {
 	//if the working set is empty, initialize to be the seed set.
 	if (C.empty()) {
-		C = C0;
+		std::copy(C0.begin(), C0.end(), std::inserter(C, C.begin()));
 	}
 	bool found = true;
 	while (found) {
@@ -103,12 +103,12 @@ void mica_initialized(OutputOptions & mica_results, const Graph & g, std::set<Bi
 		for (std::set<BicliqueLite>::iterator itc0 = C0.begin(); itc0 != C0.end(); itc0++) {
 			for (std::set<BicliqueLite>::iterator itc = C.begin(); itc != C.end(); itc++) {
 				std::vector<BicliqueLite*> cons = consensus(*itc0, *itc);
-				for (std::set<BicliqueLite*>::iterator itb = cons.begin(); itb != cons.end(); itb++) {
+				for (std::vector<BicliqueLite*>::iterator itb = cons.begin(); itb != cons.end(); itb++) {
 					//extend the bicliques that we found by taking the set intersections of the sides
-					std::set<size_t> left, right;
+					std::vector<size_t> left, right;
 					//do we get two different if we do the other way
 					right = g.get_neighborhood_intersection((*itb)->get_left(), false);
-					left = g.get_neighborhood_intersection((*itb)->get_right, false);
+					left = g.get_neighborhood_intersection((*itb)->get_right(), false);
 					BicliqueLite ext(left, right);
 					if (C.find(ext) != C.end()) {
 						found = true; //we have found a vector we do not have already
@@ -118,6 +118,6 @@ void mica_initialized(OutputOptions & mica_results, const Graph & g, std::set<Bi
 			}
 		}
 	}
-	mica_results.mibs_computed = C;
+	std::copy(C.begin(), C.end(), back_inserter(mica_results.mibs_computed));
 }
 

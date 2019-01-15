@@ -25,7 +25,7 @@
 #include "OutputOptions.h"
 
 std::vector<BicliqueLite*> consensus(BicliqueLite &, BicliqueLite &);
-void mica_cc(OutputOptions & results, const Graph &);
+void mica_cc(OutputOptions &, const Graph &);
 std::vector<BicliqueLite> mica(const Graph &);
 
 /**

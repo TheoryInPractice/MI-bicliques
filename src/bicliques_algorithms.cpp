@@ -392,18 +392,22 @@ int main(int argc, char ** argv) {
             }
             break;
         case 'b':  // just test for bipartiteness
-            OrderedVertexSet temp_oct, temp_l, temp_r;
-            simpleoct(input_g, temp_oct, temp_l, temp_r);
-            if (temp_oct.size() == 0) output_tracker.is_it_bipartite = true;
-            else output_tracker.is_it_bipartite = false;
+	    {
+            	OrderedVertexSet temp_oct, temp_l, temp_r;
+            	simpleoct(input_g, temp_oct, temp_l, temp_r);
+           	 if (temp_oct.size() == 0) output_tracker.is_it_bipartite = true;
+            	else output_tracker.is_it_bipartite = false;
+	    }
             break;
         case 'm': //MICA
-        	std::cout << "# Starting algorithm OCT-MIB" << std::endl;
-        	if (print_results_path!=std::string("")) {
-        		output_tracker.octmib_results.turn_on_print_mode(print_results_path);
-        	    output_tracker.octmib_results.count_only_mode = count_only_mode;
-        	}
-        	mica_cc(output_tracker.mica_results, input_g);
+	    	{
+	        	std::cout << "# Starting algorithm OCT-MIB" << std::endl;
+	        	if (print_results_path!=std::string("")) {
+	        		output_tracker.octmib_results.turn_on_print_mode(print_results_path);
+	        	    output_tracker.octmib_results.count_only_mode = count_only_mode;
+	        	}
+	        	mica_cc(output_tracker.mica_results, input_g);
+		}
         	break;
     }
 
