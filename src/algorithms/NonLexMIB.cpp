@@ -172,9 +172,9 @@ void nonlexmib_cc(NonLexMIBResults & nonlexmibresults,
                      const Graph & g) {
 
     // Set up data structures:
-    // mib_archive -- includes hashtable and priority_queue.
+    // mib_archive -- includes hashtable and queue.
     //      - hashtable of strings for bicliques already in heap
-    //      - priority_queue  (heap) for quick access to least biclique
+    //      - queue  (heap) for quick access to bicliques
     BicliqueArchiveNonLex mib_archive;
     size_t num_vertices = g.get_num_vertices();
 

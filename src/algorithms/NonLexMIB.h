@@ -95,13 +95,8 @@ public:
 class BicliqueArchiveNonLex {
     private:
 
-        // NOTE:
-        // This sorting operation was mistakenly used in some experiments. We
-        // believe it shouldn't affect runtime, but does affect the ordering.
-        // std::priority_queue<BicliqueLite, std::vector<BicliqueLite>, std::less<BicliqueLite> > mib_heap;
-
-        // This sorting operation is the correct one to use.
-        std::priority_queue<BicliqueLite, std::vector<BicliqueLite>, BicliqueNonLexCompare > mib_heap;
+        // Unlike LexMIB, we do not need to use a priority_queue because we do not care about order
+        std::queue<BicliqueLite, std::vector<BicliqueLite> > mib_heap;
 
         std::unordered_map<std::string,bool> map;
 
