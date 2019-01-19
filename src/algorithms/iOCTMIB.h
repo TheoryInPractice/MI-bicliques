@@ -12,7 +12,7 @@
 #include <fstream>
 #include <queue>
 #include <vector>
-#include <unordered_set>
+#include <list>
 #include <stack>
 #include "../graph/BicliqueLite.h"
 #include "../graph/Graph.h"
@@ -162,4 +162,4 @@ void lexmib_cc(LexMIBResults & lexmibresults,
                      const Graph & g);
 
 
-#endif //BICLIQUES_LEXMIB_H
+#endif //BICLIQUES_IOCTMIB_H

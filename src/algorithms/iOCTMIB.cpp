@@ -358,7 +358,7 @@ std::vector<BicliqueLite> lexmib(const Graph & g) {
  * Then, checks agains expansion_set2 to see if the biclique is maximal wrt set2.
  * Returns true if maximal wrt set2 (and edits the Biclique), false and does not edit otherwise.
  */
-bool make_maximal(Graph & g, BicliqueLite & b, OrderedVertexSet expansion_set1, OrderedVertexSet expansion_set2) {
+bool make_maximal(const Graph & g, BicliqueLite & b, OrderedVertexSet expansion_set1, OrderedVertexSet expansion_set2) {
     // Proceed with update set_x and set_y.
     OrderedVector set_x = OrderedVector(b.get_left());
     OrderedVector set_y = OrderedVector(b.get_right());
@@ -386,7 +386,7 @@ bool make_maximal(Graph & g, BicliqueLite & b, OrderedVertexSet expansion_set1, 
     return true;
 }
 
-BicliqueLite add_to(Graph & g, BicliqueLite & b, bool left, size_t vertex) {
+BicliqueLite add_to(const Graph & g, BicliqueLite & b, bool left, size_t vertex) {
 	OrderedVector x_edited = b.get_left();
 	OrderedVector y_edited = b.get_right();
 	if (left) { //add to x
@@ -407,8 +407,8 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
         const OrderedVertexSet input_left_set,
         const OrderedVertexSet input_right_set) {
 
-	std::unordered_set<BicliqueLite> hash_set;
-	std::stack<BicliqueList> stack;
+	std::set<BicliqueLite> hash_set;
+	std::stack<BicliqueLite> stack;
 	// Step (2) - generate Bicliques based on the MIS from the neighborhoods of the OCT set.
 	OrderedVertexSet left_right = input_left_set.set_union(input_right_set);
 	for (auto octitr = input_oct_set.begin(); octitr != input_oct_set.end(); octitr++) {
@@ -437,15 +437,16 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
 	}
 	//we now have a stack and dictionary that contains all bicliques we have found up until now
 	while (!stack.empty()) {
-		BicliqueLite cur = stack.pop();
+		BicliqueLite cur = stack.top();
+		stack.pop(); //pop does not return in c++, must do top then pop
 		for (auto o_itr = input_oct_set.begin(); o_itr != input_oct_set.end(); o_itr++) {
 			//this could be more efficient if we used sets within BicliqueLite
-			if (cur.get_left().find(*o_itr) == cur.get_left().end() && cur.get_right().find(*o_itr) == cur.get_right().end()) {
+			if (find(cur.get_left().begin(), cur.get_left().end(), *o_itr) == cur.get_left().end() && find(cur.get_right().begin(), cur.get_right().end(), *o_itr) == cur.get_right().end()) {
 				BicliqueLite m1 = add_to(g, cur, true, *o_itr);
 				make_maximal(g, m1, input_oct_set, OrderedVertexSet());
 				if (hash_set.insert(m1).second) {
 					stack.push(m1);
-					ioctmib_results.push_back(m2);
+					ioctmib_results.push_back(m1);
 				}
 				BicliqueLite m2 = add_to(g, cur, false, *o_itr);
 				make_maximal(g, m2, input_oct_set, OrderedVertexSet());
@@ -456,6 +457,4 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
 			}
 		}
 	}
-
-
 }
