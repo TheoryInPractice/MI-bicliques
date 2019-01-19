@@ -15,6 +15,7 @@
 #include <fstream>
 #include "graph/Graph.h"
 #include "algorithms/OCTMIB.h"
+#include "algorithms/iOCTMIB.h"
 #include "algorithms/LexMIB.h"
 #include "algorithms/NonLexMIB.h"
 #include "algorithms/SimpleCCs.h"
