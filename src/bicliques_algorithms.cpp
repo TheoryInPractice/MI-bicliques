@@ -105,6 +105,7 @@ struct OutputHandler {
     bool is_it_bipartite = false;
 
     OutputOptions octmib_results;
+    OutputOptions ioctmib_results;
     LexMIBResults lexmib_results;
     NonLexMIBResults nonlexmib_results;
 
@@ -174,6 +175,48 @@ struct OutputHandler {
                 output_file << " " << this->num_vertices << std::flush;
                 output_file << " " << this->time_out_value << std::flush;
                 output_file << " " << octmib_results.mib_limit_value  << std::flush;
+                output_file << std::endl;
+                break;
+            case 'i':
+                // Ensure we output stats from prescribed decomposition,
+                // if it was provided.
+                if (ioctmib_results.size_left_given > 0) {
+                    ioctmib_results.size_left = ioctmib_results.size_left_given;
+                    ioctmib_results.size_right = ioctmib_results.size_right_given;
+                    ioctmib_results.num_oct_vertices = ioctmib_results.num_oct_vertices_given;
+                    ioctmib_results.num_oct_edges = ioctmib_results.num_oct_edges_given;
+                }
+
+                output_file << "OCT-MIB " << this->input_file_path;
+                output_file << " " << this->successful_termination;
+                output_file << " " << ioctmib_results.total_num_mibs << std::flush;
+                // std::fixed prevents scientific notation
+                output_file << std::fixed << " " << this->elapsed_time << std::flush;
+                output_file << " " << ioctmib_results.bipartite_num_mibs << std::flush;
+
+                output_file << " " << ioctmib_results.time_bipartite_mcb << std::flush;
+                output_file << " " << ioctmib_results.time_iter_mis << std::flush;
+                output_file << " " << ioctmib_results.time_mcbs << std::flush;
+                output_file << " " << ioctmib_results.time_blueprint_init << std::flush;
+                output_file << " " << ioctmib_results.time_mcb_checking << std::flush;
+                output_file << " " << ioctmib_results.time_search_tree_expand << std::flush;
+
+                output_file << " " << ioctmib_results.time_oct_MIS << std::flush;
+                output_file << " " << ioctmib_results.time_oct_decomp << std::flush;
+                output_file << " " << ioctmib_results.time_ccs << std::flush;
+                output_file << " " << ioctmib_results.num_oct_iter_mis_completed << std::flush;
+                output_file << " " << ioctmib_results.num_oct_iter_mis << std::flush;
+
+                output_file << " " << ioctmib_results.num_oct_mis_completed << std::flush;
+                output_file << " " << ioctmib_results.num_oct_mis << std::flush;
+                output_file << " " << ioctmib_results.num_oct_edges << std::flush;
+                output_file << " " << ioctmib_results.num_oct_vertices << std::flush;
+                output_file << " " << ioctmib_results.size_left << std::flush;
+                output_file << " " << ioctmib_results.size_right << std::flush;
+                output_file << " " << this->num_edges << std::flush;
+                output_file << " " << this->num_vertices << std::flush;
+                output_file << " " << this->time_out_value << std::flush;
+                output_file << " " << ioctmib_results.mib_limit_value  << std::flush;
                 output_file << std::endl;
                 break;
             case 'l':
@@ -295,7 +338,8 @@ int main(int argc, char ** argv) {
         std::cout << "Bicliques algorithms suite.\n\n";
         std::cout << "required arguments:\n";
         std::cout << "\tALGORITHM             which algorithm to use: l (LexMIB), ";
-        std::cout << "o (OCT-MIB), c (counts # CCs), b (checks if bipartite)\n";
+        std::cout << "o (OCT-MIB), c (counts # CCs), b (checks if bipartite), ";
+        std::cout << "i (improved OCT-MIB)\n";
         std::cout << "\tPATH_TO_INPUT_FILE    directory and filename of input graph\n\n";
         std::cout << "optional arguments:\n";
         std::cout << "\t-h                    show this help message and exit\n";
@@ -315,7 +359,8 @@ int main(int argc, char ** argv) {
         output_tracker.which_algorithm != "o" &&
         output_tracker.which_algorithm != "b" &&
         output_tracker.which_algorithm != "c" &&
-		output_tracker.which_algorithm != "n") {
+		output_tracker.which_algorithm != "n" &&
+		output_tracker.which_algorithm != "i") {
         std::cout << "ERROR::BICLIQUES incorrect algorithm specified: ";
         std::cout << output_tracker.which_algorithm << std::endl;
         error = 0;
@@ -387,6 +432,14 @@ int main(int argc, char ** argv) {
                 output_tracker.octmib_results.count_only_mode = count_only_mode;
             }
             octmib(output_tracker.octmib_results, input_g, oct_set, left_partition);
+            break;
+        case 'i':
+        	std::cout << "# Starting algorithm iOCT-MIB" << std::endl;
+            if (print_results_path!=std::string("")) {
+                output_tracker.ioctmib_results.turn_on_print_mode(print_results_path);
+                output_tracker.ioctmib_results.count_only_mode = count_only_mode;
+            }
+            ioctmib(output_tracker.ioctmib_results, input_g, oct_set, left_partition);
             break;
         case 'l':  // run LexMIB
             std::cout << "# Starting algorithm LexMIB" << std::endl;
