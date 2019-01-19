@@ -19,7 +19,7 @@
 #include "../graph/OrderedVector.h"
 #include "OutputOptions.h"
 #include "MaximalCrossingBicliquesBipartite.h"
-#include "AllMaximalIndependentSets.cpp"
+#include "AllMaximalIndependentSets.h"
 #include "../graph/OctGraph.h"
 
 
