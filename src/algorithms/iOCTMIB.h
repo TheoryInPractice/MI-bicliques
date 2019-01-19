@@ -37,4 +37,17 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
         const OrderedVertexSet input_oct_set,
         const OrderedVertexSet input_left_set,
         const OrderedVertexSet input_right_set);
+
+/**
+ * Wrapper for our OCTMIB algorithm together that first separates out
+ * connected components, runs our algorithm on each CC, and aggregates
+ * the results.
+ */
+void ioctmib(OutputOptions & ioctmib_results,
+             const Graph & g,
+             OrderedVertexSet input_oct_set,
+             OrderedVertexSet input_left_set,
+             OrderedVertexSet input_right_set);
+
+
 #endif //BICLIQUES_IOCTMIB_H

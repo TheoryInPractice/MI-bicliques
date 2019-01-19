@@ -118,3 +118,110 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
 		}
 	}
 }
+
+/**
+ * Wrapper for our OCTMIB algorithm together that first separates out
+ * connected components, runs our algorithm on each CC, and aggregates
+ * the results.
+ */
+void octmib(OutputOptions & ioctmib_results,
+             const Graph & g,
+             OrderedVertexSet input_oct_set,
+             OrderedVertexSet input_left_set,
+             OrderedVertexSet input_right_set) {
+
+
+    ioctmib_results.set_base_graph(g);
+    ioctmib_results.n = g.get_num_vertices();
+    ioctmib_results.m = g.get_num_edges();
+
+    // Determine connected components
+    clock_t begint = std::clock();
+    std::vector<std::vector<size_t>> vector_of_ccs = simpleccs(g);
+    clock_t endt = std::clock();
+    ioctmib_results.time_ccs += double(endt - begint) / CLOCKS_PER_SEC;
+    ioctmib_results.num_connected_components = vector_of_ccs.size();
+
+    std::cout << "# Graph has " << vector_of_ccs.size();
+    std::cout << " connected components. CC ran in " << ioctmib_results.time_ccs;
+    std::cout << std::endl;
+
+    // Get correct number edges in prescribed OCT decomp, if provided
+    if (input_oct_set.size() > 0) {
+        Graph temp_graph = g.subgraph(input_oct_set);
+        ioctmib_results.num_oct_edges_given = temp_graph.get_num_edges();
+    }
+
+
+    if (vector_of_ccs.size() > 1) {
+        OrderedVertexSet oct_set_cc, left_set_cc, right_set_cc;
+
+        // run octmib on each CC
+        for (size_t which_cc = 0; which_cc < vector_of_ccs.size(); which_cc++) {
+
+            // Time this CC
+            begint = std::clock();
+
+            std::vector<size_t> vertex_subset = vector_of_ccs[which_cc];
+            ioctmib_results.relabeling_mode = false;
+
+            // relabel ground truth using this ordering
+            std::vector<size_t> reverse_ordering(g.get_num_vertices());
+            for (size_t idx1=0; idx1<vertex_subset.size(); idx1++) {
+                reverse_ordering[vertex_subset[idx1]] = idx1;
+            }
+
+            std::cout << "# CC " << which_cc + 1 << " of ";
+            std::cout << vector_of_ccs.size() << std::endl;
+            std::cout << "#\tsize: " << vertex_subset.size() << "/";
+            std::cout << g.get_num_vertices() << std::endl;
+
+            // Skip Isolated vertices and empty sets
+            if (vertex_subset.size() <= 1) {
+                ioctmib_results.isolates ++;
+                continue;
+            }
+
+            // Isolated edges are MIBs
+            if (vertex_subset.size() == 2) {
+                BicliqueLite temp((std::vector<size_t>){vertex_subset.front()},
+                                  (std::vector<size_t>){vertex_subset.back()});
+                ioctmib_results.push_back_bipartite(temp);
+                ioctmib_results.size_left ++;
+                ioctmib_results.size_right ++;
+                continue;
+            }
+
+            Graph g_cc = g.subgraph(vertex_subset);
+
+            // Restrict OCT decomposition to this subgraph
+            if (input_oct_set.size() > 0) {
+                oct_set_cc = input_oct_set.set_intersection(vertex_subset);
+                left_set_cc = input_left_set.set_intersection(vertex_subset);
+                right_set_cc = input_right_set.set_intersection(vertex_subset);
+            }
+
+            // relabel oct decomposition using subgraph labels
+            oct_set_cc = convert_node_labels_OVS(oct_set_cc, reverse_ordering);
+            left_set_cc = convert_node_labels_OVS(left_set_cc, reverse_ordering);
+            right_set_cc = convert_node_labels_OVS(right_set_cc, reverse_ordering);
+
+            ioctmib_results.turn_on_relabeling_mode(vertex_subset);
+            ioctmib_cc(ioctmib_results, g_cc, oct_set_cc, left_set_cc, right_set_cc);
+
+            endt = std::clock();
+            std::cout << "# this CC ran in ";
+            std::cout << double(endt - begint) / CLOCKS_PER_SEC;
+            std::cout << "\n#\n# " << std::endl;
+
+        }
+
+    }
+    else {
+        octmib_cc(ioctmib_results, g, input_oct_set, input_left_set, input_right_set);
+    }
+
+    ioctmib_results.total_num_mibs += ioctmib_results.bipartite_num_mibs;
+    ioctmib_results.close_results();
+
+}
