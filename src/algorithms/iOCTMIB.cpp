@@ -445,13 +445,13 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
 				make_maximal(g, m1, input_oct_set, OrderedVertexSet());
 				if (hash_set.insert(m1).second) {
 					stack.push(m1);
-					ioctmib_results.push_back(b);
+					ioctmib_results.push_back(m2);
 				}
-				BicliqueLite m2 = add_to(g, cur, true, *o_itr);
+				BicliqueLite m2 = add_to(g, cur, false, *o_itr);
 				make_maximal(g, m2, input_oct_set, OrderedVertexSet());
 				if (hash_set.insert(m2).second) {
 					stack.push(m2);
-					ioctmib_results.push_back(b);
+					ioctmib_results.push_back(m2);
 				}
 			}
 		}
