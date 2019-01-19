@@ -124,7 +124,7 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
  * connected components, runs our algorithm on each CC, and aggregates
  * the results.
  */
-void octmib(OutputOptions & ioctmib_results,
+void ioctmib(OutputOptions & ioctmib_results,
              const Graph & g,
              OrderedVertexSet input_oct_set,
              OrderedVertexSet input_left_set,
@@ -218,7 +218,7 @@ void octmib(OutputOptions & ioctmib_results,
 
     }
     else {
-        octmib_cc(ioctmib_results, g, input_oct_set, input_left_set, input_right_set);
+        ioctmib_cc(ioctmib_results, g, input_oct_set, input_left_set, input_right_set);
     }
 
     ioctmib_results.total_num_mibs += ioctmib_results.bipartite_num_mibs;

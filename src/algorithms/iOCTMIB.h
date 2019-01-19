@@ -14,6 +14,7 @@
 #include <vector>
 #include <list>
 #include <stack>
+#include <ctime>
 #include "../graph/BicliqueLite.h"
 #include "../graph/Graph.h"
 #include "../graph/OrderedVector.h"
