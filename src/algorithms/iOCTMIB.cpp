@@ -159,7 +159,7 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
 //        octmib_results.turn_on_max_check_mode(global_duplicates_table, oct_set);
         temp.turn_on_relabeling_mode(non_oct_vertices);
 	//std::cout << "Printing subgraph before MCBB call:" << std::endl;
-	g_minus_oct.print_graph();
+	//g_minus_oct.print_graph();
 	maximal_crossing_bicliques_bipartite(temp,
                                              g_minus_oct,
                                              bipartite_left,
