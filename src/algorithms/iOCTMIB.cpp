@@ -12,7 +12,7 @@
 
 #include "iOCTMIB.h"
 #include "SimpleCCs.h"
-
+#include "../graph/OrderedVector.h"
 /**
  * Edits the given biclique to be maximal with respect to expansion_set1.
  * Then, checks agains expansion_set2 to see if the biclique is maximal wrt set2.
@@ -22,7 +22,11 @@ bool make_maximal(const Graph & g, BicliqueLite & b, OrderedVertexSet expansion_
     // Proceed with update set_x and set_y.
     OrderedVector set_x = OrderedVector(b.get_left());
     OrderedVector set_y = OrderedVector(b.get_right());
+    //std::cout << "Incoming biclique: " << b.to_string() << std::endl;
     for (auto current_vertex : expansion_set1) {
+	if (set_x.has_vertex(current_vertex) || set_y.has_vertex(current_vertex)) {
+		continue;
+	}
     	if (g.is_completely_independent_from(current_vertex, set_x) && g.is_completely_connect_to(current_vertex, set_y)) {
             set_x.bubble_sort(current_vertex);
         }
@@ -33,6 +37,10 @@ bool make_maximal(const Graph & g, BicliqueLite & b, OrderedVertexSet expansion_
 
     }
     for (auto current_vertex : expansion_set2) {
+	if (set_x.has_vertex(current_vertex) || set_y.has_vertex(current_vertex)) {
+                continue;
+        }
+
     	if (g.is_completely_independent_from(current_vertex, set_x) && g.is_completely_connect_to(current_vertex, set_y)) {
             return false;
         }
@@ -42,7 +50,12 @@ bool make_maximal(const Graph & g, BicliqueLite & b, OrderedVertexSet expansion_
         }
 
     }
+    if (set_x.size() == 0 || set_y.size() == 0) {
+	//std::cout << "Discarding biclique for empty side" << std::endl;
+	return false;
+    }
     b = BicliqueLite(set_x, set_y);
+    //std::cout << "Outgoing biclique: " << b.to_string() << std::endl;
     return true;
 }
 
@@ -66,57 +79,137 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
         const OrderedVertexSet input_oct_set,
         const OrderedVertexSet input_left_set,
         const OrderedVertexSet input_right_set) {
-
+	//std::cout << "in ioctmib_cc" << std::endl;
 	std::set<BicliqueLite> hash_set;
 	std::stack<BicliqueLite> stack;
 	// Step (2) - generate Bicliques based on the MIS from the neighborhoods of the OCT set.
 	OrderedVertexSet left_right = input_left_set.set_union(input_right_set);
+
+	OctGraph og(g, input_oct_set, input_left_set, input_right_set);
+	const OrderedVertexSet & left_partition = og.get_left();
+	const OrderedVertexSet & oct_set = og.get_oct();
+	const OrderedVertexSet & right_partition = og.get_right();
+	    const OrderedVector left_partition_OV(left_partition.get_vertices());
+    const OrderedVector oct_set_OV(oct_set.get_vertices());
+    const OrderedVector right_partition_OV(right_partition.get_vertices());
+
+    OrderedVector non_oct_vertices(left_partition_OV.set_union(right_partition_OV));
+	
+	//std::cout << "input_oct_set size: " << input_oct_set.size() << std::endl;
 	for (auto octitr = input_oct_set.begin(); octitr != input_oct_set.end(); octitr++) {
-		auto neighborhood = g.subgraph(g.get_neighbors_vector(*octitr));
+		auto neighbs = g.get_neighbors_vector(*octitr);
+		auto neighborhood = g.subgraph(neighbs);
 		std::vector<std::vector<size_t>> mis_list = get_all_mis(neighborhood);
+		convert_node_labels_vector_inplace(mis_list, neighbs);
+		//std::cout << "Oct node is: " << *octitr << std::endl;
+		//std::cout << "Has neighbors: ";
+		//for (auto neigh : neighbs) {
+		//	std::cout << neigh << " ";
+		//}
+		//std::cout << std::endl;
+		//std::cout << "mis_list size: " << mis_list.size() << std::endl;
 		for (auto mis_itr = mis_list.begin(); mis_itr != mis_list.end(); mis_itr++) {
+			//std::cout << "MIS is: ";
+			//for (auto& vertex: (*mis_itr)) {
+			//	std::cout << vertex << " ";
+			//}
+			//std::cout << std::endl;
 			BicliqueLite b = BicliqueLite(std::vector<size_t>{*octitr}, *mis_itr);
 			if (make_maximal(g, b, input_oct_set, left_right)) {
 				if (hash_set.insert(b).second) {
 					stack.push(b);
+					ioctmib_results.push_back(b);
+					//std::cout << "Adding biclique from step 2, adding to results: " << b.to_string() << std::endl;
 				}
 			}
+			// else {
+			//	std::cout << "Make maximal returned false for: " << b.to_string() << std::endl;
+			//}
 		}
 	}
 	// Step (1) - call MCBB on the bipartite portion
 	OutputOptions temp;
-	maximal_crossing_bicliques_bipartite(temp, g, input_left_set.get_vertices(), input_right_set.get_vertices());
+	//std::cout << "Making call to MCBB" << std::endl;
+	// Extract bipartite subgraph
+	Graph g_minus_oct = og.subgraph(non_oct_vertices);
+        std::vector<size_t> bipartite_left, bipartite_right;
+        //std::cout << "non_oct: ";
+        //for (auto &v : non_oct_vertices) {
+        //        std::cout << v << " ";
+        //}
+        //std::cout << std::endl;
 
+	for (size_t idx=0; idx< non_oct_vertices.size(); idx++){
+            if (left_partition.has_vertex(non_oct_vertices[idx])) {
+                bipartite_left.push_back(idx);
+            }
+            else bipartite_right.push_back(idx);
+        }
+	//std::cout << "bipartite_left: ";
+	//for (auto & v : bipartite_left) {
+	//	std::cout << v << " ";
+	//}
+	//std::cout << std::endl;
+	//std::cout << "bipartite_right: ";
+	//for (auto &v : bipartite_right) {
+	//	std::cout << v << " ";
+	//}
+	//std::cout << std::endl;
+        // Compute mcbs on bipartite graph
+//        octmib_results.turn_on_max_check_mode(global_duplicates_table, oct_set);
+        temp.turn_on_relabeling_mode(non_oct_vertices);
+	//std::cout << "Printing subgraph before MCBB call:" << std::endl;
+	g_minus_oct.print_graph();
+	maximal_crossing_bicliques_bipartite(temp,
+                                             g_minus_oct,
+                                             bipartite_left,
+                                             bipartite_right);
+	//std::cout << "After call to MCBB, found: " << temp.mibs_computed.size() << std::endl;
 	for (auto b_itr = temp.mibs_computed.begin(); b_itr != temp.mibs_computed.end(); b_itr++) {
 		BicliqueLite b = *b_itr;
-		make_maximal(g, b, input_oct_set, OrderedVertexSet());
-		if (hash_set.insert(b).second) {
-			stack.push(b);
-			ioctmib_results.push_back(b);
+		//I think if there was any place we could avoid using left_right it would be here
+		if(make_maximal(g, b, input_oct_set, left_right)) {
+			if (hash_set.insert(b).second) {
+				stack.push(b);
+				ioctmib_results.push_back(b);
+				//std::cout << "Adding biclique to resutls from step 1: " << b.to_string() << std::endl; 
+			}
 		}
 	}
 	//we now have a stack and dictionary that contains all bicliques we have found up until now
+	//std::cout << "Size of stack before first call: " << stack.size() << std::endl;
 	while (!stack.empty()) {
 		BicliqueLite cur = stack.top();
 		stack.pop(); //pop does not return in c++, must do top then pop
+		//std::cout << "After pop from stack, has size: " << stack.size() << std::endl;
+		//std::cout << "Current biclique is: " << cur.to_string() << std::endl;
 		for (auto o_itr = input_oct_set.begin(); o_itr != input_oct_set.end(); o_itr++) {
 			//this could be more efficient if we used sets within BicliqueLite
+			//std::cout << "Checking for oct node " << *o_itr << std::endl;
 			if (find(cur.get_left().begin(), cur.get_left().end(), *o_itr) == cur.get_left().end() && find(cur.get_right().begin(), cur.get_right().end(), *o_itr) == cur.get_right().end()) {
 				BicliqueLite m1 = add_to(g, cur, true, *o_itr);
-				make_maximal(g, m1, input_oct_set, OrderedVertexSet());
-				if (hash_set.insert(m1).second) {
-					stack.push(m1);
-					ioctmib_results.push_back(m1);
+				if(make_maximal(g, m1, input_oct_set, left_right)) {
+					if (hash_set.insert(m1).second) {
+						stack.push(m1);
+						ioctmib_results.push_back(m1);
+						//std::cout << "Adding m1: " << m1.to_string() << std::endl;
+					}
 				}
 				BicliqueLite m2 = add_to(g, cur, false, *o_itr);
-				make_maximal(g, m2, input_oct_set, OrderedVertexSet());
-				if (hash_set.insert(m2).second) {
-					stack.push(m2);
-					ioctmib_results.push_back(m2);
+				if(make_maximal(g, m2, input_oct_set, left_right)) {
+					if (hash_set.insert(m2).second) {
+						stack.push(m2);
+						ioctmib_results.push_back(m2);
+						//std::cout << "Adding m2: " << m2.to_string() << std::endl;
+					}
 				}
 			}
 		}
 	}
+	//std::cout << "After running, found: " << hash_set.size() << " bicliques. printing all..." << std::endl;
+	//for (auto b : hash_set) {
+	//	std::cout << b.to_string() << std::endl;
+	//}
 }
 
 /**
@@ -130,7 +223,7 @@ void ioctmib(OutputOptions & ioctmib_results,
              OrderedVertexSet input_left_set,
              OrderedVertexSet input_right_set) {
 
-
+    //std::cout << "in ioctmib" << std::endl;
     ioctmib_results.set_base_graph(g);
     ioctmib_results.n = g.get_num_vertices();
     ioctmib_results.m = g.get_num_edges();
