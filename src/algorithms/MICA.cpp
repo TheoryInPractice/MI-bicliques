@@ -84,10 +84,29 @@ void mica_cc(OutputOptions & mica_results, const Graph & g) {
 	size_t num_vertices = g.get_num_vertices();
 	for (size_t v = 0; v < num_vertices; v++) {
 		std::vector<size_t> left, right, temp;
-		right = g.get_neighbors_vector(v);
-		left = g.get_neighborhood_intersection(right, false);
-		left.push_back(v);
-		C0.insert(BicliqueLite(left, right));
+		left = g.get_neighbors_vector(v);
+		std::cout << "Neighbors vector for " << v << " has size " << left.size() << " and elements: ";
+		for (auto itr = left.begin(); itr != left.end(); itr++) {
+			std::cout << *itr << " ";
+		}
+		std::cout << std::endl;
+		right = g.get_neighborhood_intersection(left, false);
+		//if right does not have the original vertex, add it in (should not be necessary)	
+		if (find(right.begin(), right.end(), v) == left.end()) {
+			right.push_back(v);
+		}
+		auto it = C0.insert(BicliqueLite(left, right));
+		std::cout << "before putting in biclique object, left and right are:" << std::endl;
+		for (auto itr = left.begin(); itr != left.end(); itr++) {
+			std::cout << *itr << " ";
+		}
+		std::cout << std::endl;
+		for (auto itr = right.begin(); itr != right.end(); itr++) {
+			std::cout << *itr << " ";
+		}
+		std::cout << std::endl;
+		std::cout << "For starting vertex: " << v << " found max'l biclique (" << g.is_biclique(*(it.first)) << "):" << std::endl;
+		std::cout << g.biclique_string(*(it.first)) << std::endl; 
 	}
 	mica_initialized(mica_results, g, C0, std::set<BicliqueLite>());
 }
@@ -102,22 +121,34 @@ void mica_initialized(OutputOptions & mica_results, const Graph & g, std::set<Bi
 		found = false;
 		for (std::set<BicliqueLite>::iterator itc0 = C0.begin(); itc0 != C0.end(); itc0++) {
 			for (std::set<BicliqueLite>::iterator itc = C.begin(); itc != C.end(); itc++) {
+				std::cout << "Consensus of :" << std::endl;
+				std::cout << itc0->to_string() << std::endl;
+				std::cout << itc->to_string() << std::endl;
+				std::cout << "Found:" << std::endl;
 				std::vector<BicliqueLite*> cons = consensus(*itc0, *itc);
 				for (std::vector<BicliqueLite*>::iterator itb = cons.begin(); itb != cons.end(); itb++) {
 					//extend the bicliques that we found by taking the set intersections of the sides
 					std::vector<size_t> left, right;
-					//do we get two different if we do the other way
+					std::cout << g.biclique_string(*(*itb));
 					right = g.get_neighborhood_intersection((*itb)->get_left(), false);
 					left = g.get_neighborhood_intersection((*itb)->get_right(), false);
+					//left = (*itb)->get_left();
+					//right = (*itb)->get_right();
 					BicliqueLite ext(left, right);
-					if (C.find(ext) != C.end()) {
+					BicliqueLite ext_rev(right, left);
+					// need to check both sides
+					if (C.find(ext) == C.end() && C.find(ext_rev) == C.end()) {
 						found = true; //we have found a vector we do not have already
+						std::cout << " - added";
 						C.insert(ext);
 					}
+					std::cout << std::endl;
 				}
+				std::cout << std::endl;
 			}
 		}
 	}
 	std::copy(C.begin(), C.end(), back_inserter(mica_results.mibs_computed));
+	mica_results.bipartite_num_mibs = C.size();
 }
 

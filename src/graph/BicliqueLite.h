@@ -46,7 +46,7 @@ public:
         return ( !(*this<other) && !(*this==other) );
     }
 
-    const std::string to_string();
+    const std::string to_string() const;
     const std::string & to_string_persistent();
     inline size_t size() const {return num_vertices;};
 

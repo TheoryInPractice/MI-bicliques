@@ -176,6 +176,54 @@ struct OutputHandler {
                 output_file << " " << octmib_results.mib_limit_value  << std::flush;
                 output_file << std::endl;
                 break;
+	    case 'm':
+
+                // Ensure we output stats from prescribed decomposition,
+                // if it was provided.
+                if (mica_results.size_left_given > 0) {
+                    mica_results.size_left = mica_results.size_left_given;
+                    mica_results.size_right = mica_results.size_right_given;
+                    mica_results.num_oct_vertices = mica_results.num_oct_vertices_given;
+                    mica_results.num_oct_edges = mica_results.num_oct_edges_given;
+                }
+
+                output_file << "MICA " << this->input_file_path;
+                output_file << " " << this->successful_termination;
+                output_file << " " << mica_results.total_num_mibs << std::flush;
+                // std::fixed prevents scientific notation
+                output_file << std::fixed << " " << this->elapsed_time << std::flush;
+                output_file << " " << mica_results.bipartite_num_mibs << std::flush;
+
+                output_file << " " << mica_results.time_bipartite_mcb << std::flush;
+                output_file << " " << mica_results.time_iter_mis << std::flush;
+                output_file << " " << mica_results.time_mcbs << std::flush;
+                output_file << " " << mica_results.time_blueprint_init << std::flush;
+                output_file << " " << mica_results.time_mcb_checking << std::flush;
+                output_file << " " << mica_results.time_search_tree_expand << std::flush;
+
+                output_file << " " << mica_results.time_oct_MIS << std::flush;
+                output_file << " " << mica_results.time_oct_decomp << std::flush;
+                output_file << " " << mica_results.time_ccs << std::flush;
+                output_file << " " << mica_results.num_oct_iter_mis_completed << std::flush;
+                output_file << " " << mica_results.num_oct_iter_mis << std::flush;
+
+                output_file << " " << mica_results.num_oct_mis_completed << std::flush;
+                output_file << " " << mica_results.num_oct_mis << std::flush;
+                output_file << " " << mica_results.num_oct_edges << std::flush;
+                output_file << " " << mica_results.num_oct_vertices << std::flush;
+                output_file << " " << mica_results.size_left << std::flush;
+                output_file << " " << mica_results.size_right << std::flush;
+                output_file << " " << this->num_edges << std::flush;
+                output_file << " " << this->num_vertices << std::flush;
+                output_file << " " << this->time_out_value << std::flush;
+                output_file << " " << mica_results.mib_limit_value  << std::flush;
+                output_file << std::endl;
+		//test code to print out bicliqies
+		for (auto itb = mica_results.mibs_computed.begin(); itb != mica_results.mibs_computed.end(); itb++) {
+			output_file << itb->to_string() << std::endl;
+		}
+                break;
+
             case 'l':
                 output_file << "LexMIB " << this->input_file_path;
                 output_file << " " << this->successful_termination;
@@ -403,8 +451,8 @@ int main(int argc, char ** argv) {
 	    	{
 	        	std::cout << "# Starting algorithm OCT-MIB" << std::endl;
 	        	if (print_results_path!=std::string("")) {
-	        		output_tracker.octmib_results.turn_on_print_mode(print_results_path);
-	        	    output_tracker.octmib_results.count_only_mode = count_only_mode;
+	        		output_tracker.mica_results.turn_on_print_mode(print_results_path);
+	        	    output_tracker.mica_results.count_only_mode = count_only_mode;
 	        	}
 	        	mica_cc(output_tracker.mica_results, input_g);
 		}

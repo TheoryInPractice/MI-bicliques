@@ -203,7 +203,7 @@ const std::string & BicliqueLite::to_string_persistent() {
 
 
 // Same output, but without saving anything internally
-const std::string BicliqueLite::to_string() {
+const std::string BicliqueLite::to_string() const { 
 
     auto dummy = get_all_vertices();
     std::stringstream s;
