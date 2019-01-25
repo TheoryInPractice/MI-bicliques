@@ -9,6 +9,7 @@
 #include <ctime> // for timing
 #include <csignal> // for triggering early termination
 #include <list>
+#include <algorithm>
 
 #include "MICA.h"
 #include "MaximalCrossingBicliques.h"
@@ -57,6 +58,7 @@ std::vector<BicliqueLite*> consensus(BicliqueLite b1, BicliqueLite b2) {
 		bicliques.push_back(new BicliqueLite(left1, right1));
 	}
 	if (left2.size() > 0 && right2.size() > 0) {
+
 		bicliques.push_back(new BicliqueLite(left2, right2));
 	}
 	if (left3.size() > 0 && right3.size() > 0) {
@@ -83,6 +85,9 @@ void mica_cc(OutputOptions & mica_results, const Graph & g) {
 	std::set<BicliqueLite> C0;
 	size_t num_vertices = g.get_num_vertices();
 	for (size_t v = 0; v < num_vertices; v++) {
+		if (g.get_neighbors(v).size() == 0) {
+			continue;
+		}
 		std::vector<size_t> left, right, temp;
 		left = g.get_neighbors_vector(v);
 		std::cout << "Neighbors vector for " << v << " has size " << left.size() << " and elements: ";
@@ -115,6 +120,9 @@ void mica_initialized(OutputOptions & mica_results, const Graph & g, std::set<Bi
 	//if the working set is empty, initialize to be the seed set.
 	if (C.empty()) {
 		std::copy(C0.begin(), C0.end(), std::inserter(C, C.begin()));
+		for (auto b: C0) {
+			mica_results.push_back(b);
+		}
 	}
 	bool found = true;
 	while (found) {
@@ -131,7 +139,7 @@ void mica_initialized(OutputOptions & mica_results, const Graph & g, std::set<Bi
 					std::vector<size_t> left, right;
 					std::cout << g.biclique_string(*(*itb));
 					right = g.get_neighborhood_intersection((*itb)->get_left(), false);
-					left = g.get_neighborhood_intersection((*itb)->get_right(), false);
+					left = g.get_neighborhood_intersection(right, false);
 					//left = (*itb)->get_left();
 					//right = (*itb)->get_right();
 					BicliqueLite ext(left, right);
@@ -141,6 +149,7 @@ void mica_initialized(OutputOptions & mica_results, const Graph & g, std::set<Bi
 						found = true; //we have found a vector we do not have already
 						std::cout << " - added";
 						C.insert(ext);
+						mica_results.push_back(ext);
 					}
 					std::cout << std::endl;
 				}
@@ -148,7 +157,10 @@ void mica_initialized(OutputOptions & mica_results, const Graph & g, std::set<Bi
 			}
 		}
 	}
-	std::copy(C.begin(), C.end(), back_inserter(mica_results.mibs_computed));
-	mica_results.bipartite_num_mibs = C.size();
+	//std::copy(C.begin(), C.end(), back_inserter(mica_results.mibs_computed));
+//	mica_results.bipartite_num_mibs = C.size();
+	for (auto & b : C) {
+		std::cout << g.biclique_string(b) << std::endl;
+	}
 }
 

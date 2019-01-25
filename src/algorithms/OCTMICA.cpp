@@ -89,7 +89,7 @@ void octmica_cc(OutputOptions & octmica_results,
 		std::cout << "For starting vertex: " << v << " found max'l biclique (" << g.is_biclique(*(it.first)) << "):" << std::endl;
 		std::cout << g.biclique_string(*(it.first)) << std::endl;
 	}
-	mica_initialized(mica_results, g, C0, C);
+	mica_initialized(octmica_results, g, C0, C);
 }
 
 /**

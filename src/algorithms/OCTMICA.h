@@ -21,6 +21,7 @@
 #include "OutputOptions.h"
 #include "MaximalCrossingBicliquesBipartite.h"
 #include "AllMaximalIndependentSets.h"
+#include "MICA.h"
 #include "../graph/OctGraph.h"
 
 

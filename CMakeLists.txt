@@ -45,6 +45,8 @@ add_executable(bicliques
         src/algorithms/LexMIB.h
 	src/algorithms/MICA.cpp
 	src/algorithms/MICA.h
+	src/algorithms/OCTMICA.cpp
+	src/algorithms/OCTMICA.h
         src/algorithms/SimpleCCs.cpp
         src/algorithms/SimpleCCs.h
         src/algorithms/SimpleOCT.cpp

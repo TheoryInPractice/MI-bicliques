@@ -449,7 +449,7 @@ int main(int argc, char ** argv) {
             break;
         case 'm': //MICA
 	    	{
-	        	std::cout << "# Starting algorithm OCT-MIB" << std::endl;
+	        	std::cout << "# Starting algorithm MICA" << std::endl;
 	        	if (print_results_path!=std::string("")) {
 	        		output_tracker.mica_results.turn_on_print_mode(print_results_path);
 	        	    output_tracker.mica_results.count_only_mode = count_only_mode;
