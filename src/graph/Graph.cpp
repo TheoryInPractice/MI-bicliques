@@ -424,7 +424,10 @@ std::string Graph::biclique_string(const BicliqueLite &b) const {
 
     // iterate over every node in the biclique
     for (std::vector<size_t>::const_iterator v = all_vertices.begin(); v != all_vertices.end(); v++) {
-        s << node_labels[*v] << ",";
+	// We know that everything is in the map, so we don't need to check existence first.
+	// We are using "find" instead of [] because [] modifies the map if not there and
+	// we need this to be const.
+        s << node_labels.find(*v)->second << ",";
     }
 
     return s.str();
