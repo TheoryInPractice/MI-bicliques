@@ -26,6 +26,7 @@
 
 std::vector<BicliqueLite*> consensus(BicliqueLite &, BicliqueLite &);
 void mica_cc(OutputOptions &, const Graph &);
+void mica(OutputOptions &, const Graph &);
 std::vector<BicliqueLite> mica(const Graph &);
 
 /**

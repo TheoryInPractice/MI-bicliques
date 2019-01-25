@@ -454,7 +454,7 @@ int main(int argc, char ** argv) {
 	        		output_tracker.mica_results.turn_on_print_mode(print_results_path);
 	        	    output_tracker.mica_results.count_only_mode = count_only_mode;
 	        	}
-	        	mica_cc(output_tracker.mica_results, input_g);
+	        	mica(output_tracker.mica_results, input_g);
 		}
         	break;
     }

@@ -164,3 +164,93 @@ void mica_initialized(OutputOptions & mica_results, const Graph & g, std::set<Bi
 	}
 }
 
+/**
+ * Wrapper for our OCTMIB algorithm together that first separates out
+ * connected components, runs our algorithm on each CC, and aggregates
+ * the results.
+ */
+void mica(OutputOptions & mica_results,
+             const Graph & g) {
+
+    //std::cout << "in mica" << std::endl;
+    mica_results.set_base_graph(g);
+    mica_results.n = g.get_num_vertices();
+    mica_results.m = g.get_num_edges();
+
+    // Determine connected components
+    clock_t begint = std::clock();
+    std::vector<std::vector<size_t>> vector_of_ccs = simpleccs(g);
+    clock_t endt = std::clock();
+    mica_results.time_ccs += double(endt - begint) / CLOCKS_PER_SEC;
+    mica_results.num_connected_components = vector_of_ccs.size();
+
+    std::cout << "# Graph has " << vector_of_ccs.size();
+    std::cout << " connected components. CC ran in " << mica_results.time_ccs;
+    std::cout << std::endl;
+
+    // Get correct number edges in prescribed OCT decomp, if provided
+    if (input_oct_set.size() > 0) {
+        Graph temp_graph = g.subgraph(input_oct_set);
+        mica_results.num_oct_edges_given = temp_graph.get_num_edges();
+    }
+
+
+    if (vector_of_ccs.size() > 1) {
+
+        // run octmib on each CC
+        for (size_t which_cc = 0; which_cc < vector_of_ccs.size(); which_cc++) {
+
+            // Time this CC
+            begint = std::clock();
+
+            std::vector<size_t> vertex_subset = vector_of_ccs[which_cc];
+            mica_results.relabeling_mode = false;
+
+            // relabel ground truth using this ordering
+            std::vector<size_t> reverse_ordering(g.get_num_vertices());
+            for (size_t idx1=0; idx1<vertex_subset.size(); idx1++) {
+                reverse_ordering[vertex_subset[idx1]] = idx1;
+            }
+
+            std::cout << "# CC " << which_cc + 1 << " of ";
+            std::cout << vector_of_ccs.size() << std::endl;
+            std::cout << "#\tsize: " << vertex_subset.size() << "/";
+            std::cout << g.get_num_vertices() << std::endl;
+
+            // Skip Isolated vertices and empty sets
+            if (vertex_subset.size() <= 1) {
+                mica_results.isolates ++;
+                continue;
+            }
+
+            // Isolated edges are MIBs
+            if (vertex_subset.size() == 2) {
+                BicliqueLite temp((std::vector<size_t>){vertex_subset.front()},
+                                  (std::vector<size_t>){vertex_subset.back()});
+                mica_results.push_back_bipartite(temp);
+                mica_results.size_left ++;
+                mica_results.size_right ++;
+                continue;
+            }
+
+            Graph g_cc = g.subgraph(vertex_subset);
+
+            mica_results.turn_on_relabeling_mode(vertex_subset);
+            mica_cc(mica_results, g_cc);
+
+            endt = std::clock();
+            std::cout << "# this CC ran in ";
+            std::cout << double(endt - begint) / CLOCKS_PER_SEC;
+            std::cout << "\n#\n# " << std::endl;
+
+        }
+
+    }
+    else {
+        mica_cc(mica_results, g);
+    }
+
+    mica_results.total_num_mibs += mica_results.bipartite_num_mibs;
+    mica_results.close_results();
+
+}
