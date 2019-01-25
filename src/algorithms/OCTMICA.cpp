@@ -45,6 +45,7 @@ void octmica_cc(OutputOptions & octmica_results,
             }
             else bipartite_right.push_back(idx);
         }
+	temp.turn_on_relabeling_mode(non_oct_vertices);
 	maximal_crossing_bicliques_bipartite(temp,
                                              g_minus_oct,
                                              bipartite_left,
@@ -58,33 +59,42 @@ void octmica_cc(OutputOptions & octmica_results,
 		left = b.get_left();
 		right = g.get_neighborhood_intersection(left, false);
 		left = g.get_neighborhood_intersection(right, false);
-		C.insert(BicliqueLite(left,right));
+		BicliqueLite new_biclique = BicliqueLite(left,right);
+		if(C.insert(new_biclique).second){
+			octmica_results.push_back(new_biclique);
+		}
+		//std::cout << g.biclique_string(new_biclique) << std::endl;
 	}
 
-
+//	std::cout << "OCT Star bicliques: " << std::endl;
 	std::set<BicliqueLite> C0;
 	for (auto &v : oct_set) {
 		std::vector<size_t> left, right, temp;
 		left = g.get_neighbors_vector(v);
-		//std::cout << "Neighbors vector for " << v << " has size " << left.size() << " and elements: ";
-		//for (auto itr = left.begin(); itr != left.end(); itr++) {
-		//	std::cout << *itr << " ";
-		//}
-		//std::cout << std::endl;
+//		std::cout << "Neighbors vector for " << v << " has size " << left.size() << " and elements: ";
+//		for (auto itr = left.begin(); itr != left.end(); itr++) {
+//			std::cout << *itr << " ";
+//		}
+//		std::cout << std::endl;
 		right = g.get_neighborhood_intersection(left, false);
 		//if right does not have the original vertex, add it in (should not be necessary)
 		if (find(right.begin(), right.end(), v) == left.end()) {
 			right.push_back(v);
 		}
-		auto it = C0.insert(BicliqueLite(left, right));
-		//std::cout << "before putting in biclique object, left and right are:" << std::endl;
-		//for (auto itr = left.begin(); itr != left.end(); itr++) {
-		//	std::cout << *itr << " ";
-		//}
-		//std::cout << std::endl;
-		//for (auto itr = right.begin(); itr != right.end(); itr++) {
-		//	std::cout << *itr << " ";
-		//}
+		BicliqueLite new_biclique = BicliqueLite(left,right);
+		auto it = C0.insert(new_biclique);
+		if(C.insert(new_biclique).second) {
+			octmica_results.push_back(new_biclique);
+		}
+//		std::cout << g.biclique_string(new_biclique) << std::endl;
+//		std::cout << "before putting in biclique object, left and right are:" << std::endl;
+//		for (auto itr = left.begin(); itr != left.end(); itr++) {
+//			std::cout << *itr << " ";
+//		}
+//		std::cout << std::endl;
+//		for (auto itr = right.begin(); itr != right.end(); itr++) {
+//			std::cout << *itr << " ";
+//		}
 		//std::cout << std::endl;
 		//std::cout << "For starting vertex: " << v << " found max'l biclique (" << g.is_biclique(*(it.first)) << "):" << std::endl;
 		//std::cout << g.biclique_string(*(it.first)) << std::endl;

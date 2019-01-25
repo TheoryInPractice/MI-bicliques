@@ -129,15 +129,15 @@ void mica_initialized(OutputOptions & mica_results, const Graph & g, std::set<Bi
 		found = false;
 		for (std::set<BicliqueLite>::iterator itc0 = C0.begin(); itc0 != C0.end(); itc0++) {
 			for (std::set<BicliqueLite>::iterator itc = C.begin(); itc != C.end(); itc++) {
-	//			std::cout << "Consensus of :" << std::endl;
-	//			std::cout << itc0->to_string() << std::endl;
-	//			std::cout << itc->to_string() << std::endl;
-	//			std::cout << "Found:" << std::endl;
+				//std::cout << "Consensus of :" << std::endl;
+				//std::cout << itc0->to_string() << std::endl;
+				//std::cout << itc->to_string() << std::endl;
+				//std::cout << "Found:" << std::endl;
 				std::vector<BicliqueLite*> cons = consensus(*itc0, *itc);
 				for (std::vector<BicliqueLite*>::iterator itb = cons.begin(); itb != cons.end(); itb++) {
 					//extend the bicliques that we found by taking the set intersections of the sides
 					std::vector<size_t> left, right;
-	//				std::cout << g.biclique_string(*(*itb));
+					//std::cout << (*(*itb)).to_string();
 					right = g.get_neighborhood_intersection((*itb)->get_left(), false);
 					left = g.get_neighborhood_intersection(right, false);
 					//left = (*itb)->get_left();
@@ -145,22 +145,23 @@ void mica_initialized(OutputOptions & mica_results, const Graph & g, std::set<Bi
 					BicliqueLite ext(left, right);
 					BicliqueLite ext_rev(right, left);
 					// need to check both sides
+					//std::cout << "Extended to be: " << ext.to_string() << std::endl;
 					if (C.find(ext) == C.end() && C.find(ext_rev) == C.end()) {
 						found = true; //we have found a vector we do not have already
-	//					std::cout << " - added";
+					//	std::cout << " - added";
 						C.insert(ext);
 						mica_results.push_back(ext);
 					}
-	//				std::cout << std::endl;
+					//std::cout << std::endl;
 				}
-	//			std::cout << std::endl;
+				//std::cout << std::endl;
 			}
 		}
 	}
 	//std::copy(C.begin(), C.end(), back_inserter(mica_results.mibs_computed));
 //	mica_results.bipartite_num_mibs = C.size();
 	//for (auto & b : C) {
-	//	std::cout << g.biclique_string(b) << std::endl;
+	//	std::cout << b.to_string() << std::endl;
 	//}
 }
 
