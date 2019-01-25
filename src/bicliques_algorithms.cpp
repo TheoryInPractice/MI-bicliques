@@ -498,13 +498,29 @@ int main(int argc, char ** argv) {
 	        	mica(output_tracker.mica_results, input_g);
 		}
         	break;
-        case 'o':  // run OCTMIB
+        case 't':  // run OCTMICA
+        {
             std::cout << "# Starting algorithm OCT-MICA" << std::endl;
             if (print_results_path!=std::string("")) {
                 output_tracker.octmica_results.turn_on_print_mode(print_results_path);
                 output_tracker.octmica_results.count_only_mode = count_only_mode;
             }
-            octmica(output_tracker.octmica_results, input_g, oct_set, left_partition);
+            std::vector<size_t> right_nodes;
+            auto oct_itr = oct_set.begin();
+            auto left_itr = left_partition.begin();
+            //we are going to iterate over all of the nodes in the graph and add the ones that are not in oct or left
+            for (size_t i = 0; i < input_g.get_num_vertices(); i++) {
+            	if (oct_itr != oct_set.end() && *oct_itr == i) {
+            		oct_itr++;
+            	} else if (left_itr != left_partition.end() && *left_itr == i) {
+            		left_itr++;
+            	} else {
+            		right_nodes.push_back(i);
+            	}
+            }
+            OrderedVertexSet right_partition = OrderedVertexSet(right_nodes);
+            octmica(output_tracker.octmica_results, input_g, oct_set, left_partition, right_partition);
+        }
             break;
     }
 
