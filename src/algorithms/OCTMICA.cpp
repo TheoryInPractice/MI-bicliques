@@ -66,28 +66,28 @@ void octmica_cc(OutputOptions & octmica_results,
 	for (auto &v : oct_set) {
 		std::vector<size_t> left, right, temp;
 		left = g.get_neighbors_vector(v);
-		std::cout << "Neighbors vector for " << v << " has size " << left.size() << " and elements: ";
-		for (auto itr = left.begin(); itr != left.end(); itr++) {
-			std::cout << *itr << " ";
-		}
-		std::cout << std::endl;
+		//std::cout << "Neighbors vector for " << v << " has size " << left.size() << " and elements: ";
+		//for (auto itr = left.begin(); itr != left.end(); itr++) {
+		//	std::cout << *itr << " ";
+		//}
+		//std::cout << std::endl;
 		right = g.get_neighborhood_intersection(left, false);
 		//if right does not have the original vertex, add it in (should not be necessary)
 		if (find(right.begin(), right.end(), v) == left.end()) {
 			right.push_back(v);
 		}
 		auto it = C0.insert(BicliqueLite(left, right));
-		std::cout << "before putting in biclique object, left and right are:" << std::endl;
-		for (auto itr = left.begin(); itr != left.end(); itr++) {
-			std::cout << *itr << " ";
-		}
-		std::cout << std::endl;
-		for (auto itr = right.begin(); itr != right.end(); itr++) {
-			std::cout << *itr << " ";
-		}
-		std::cout << std::endl;
-		std::cout << "For starting vertex: " << v << " found max'l biclique (" << g.is_biclique(*(it.first)) << "):" << std::endl;
-		std::cout << g.biclique_string(*(it.first)) << std::endl;
+		//std::cout << "before putting in biclique object, left and right are:" << std::endl;
+		//for (auto itr = left.begin(); itr != left.end(); itr++) {
+		//	std::cout << *itr << " ";
+		//}
+		//std::cout << std::endl;
+		//for (auto itr = right.begin(); itr != right.end(); itr++) {
+		//	std::cout << *itr << " ";
+		//}
+		//std::cout << std::endl;
+		//std::cout << "For starting vertex: " << v << " found max'l biclique (" << g.is_biclique(*(it.first)) << "):" << std::endl;
+		//std::cout << g.biclique_string(*(it.first)) << std::endl;
 	}
 	mica_initialized(octmica_results, g, C0, C);
 }
