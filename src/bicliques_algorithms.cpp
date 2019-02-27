@@ -450,7 +450,7 @@ int main(int argc, char ** argv) {
         output_tracker.which_algorithm != "b" &&
         output_tracker.which_algorithm != "c" &&
         output_tracker.which_algorithm != "n" &&
-        output_tracker.which_algorithm != "i"
+        output_tracker.which_algorithm != "i" &&
         output_tracker.which_algorithm != "m" &&
         output_tracker.which_algorithm != "t") {
         std::cout << "ERROR::BICLIQUES incorrect algorithm specified: ";
