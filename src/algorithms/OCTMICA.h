@@ -1,5 +1,5 @@
 /**
-* @authors Eric Horton, Kyle Kloster, Drew van der Poel
+* @authors Eric Horton, Kyle Kloster, Drew van der Poel, Trey Woodlief
 *
 * This file is part of MI-bicliques, https://github.com/TheoryInPractice/MI-bicliques,
 * and is Copyright (C) North Carolina State University, 2018.

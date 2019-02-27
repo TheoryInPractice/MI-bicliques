@@ -1,6 +1,6 @@
 /**
 * This implements octmica, our improved version of OCTMIB
-* @authors Eric Horton, Kyle Kloster, Drew van der Poel
+* @authors Eric Horton, Kyle Kloster, Drew van der Poel, Trey Woodlief
 *
 * This file is part of MI-bicliques, https://github.com/TheoryInPractice/MI-bicliques,
 * and is Copyright (C) North Carolina State University, 2018.
@@ -19,10 +19,8 @@ void octmica_cc(OutputOptions & octmica_results,
         const OrderedVertexSet input_oct_set,
         const OrderedVertexSet input_left_set,
         const OrderedVertexSet input_right_set) {
-	//std::cout << "in octmica_cc" << std::endl;
 	std::set<BicliqueLite> hash_set;
 	std::stack<BicliqueLite> stack;
-	// Step (2) - generate Bicliques based on the MIS from the neighborhoods of the OCT set.
 	OrderedVertexSet left_right = input_left_set.set_union(input_right_set);
 
 	OctGraph og(g, input_oct_set, input_left_set, input_right_set);
@@ -52,7 +50,6 @@ void octmica_cc(OutputOptions & octmica_results,
                                              bipartite_right);
 
 	std::set<BicliqueLite> C;
-	//std::cout << "After call to MCBB, found: " << temp.mibs_computed.size() << std::endl;
 	for (auto b_itr = temp.mibs_computed.begin(); b_itr != temp.mibs_computed.end(); b_itr++) {
 		BicliqueLite b = *b_itr;
 		std::vector<size_t> left, right, temp;
@@ -63,19 +60,11 @@ void octmica_cc(OutputOptions & octmica_results,
 		if(C.insert(new_biclique).second){
 			octmica_results.push_back(new_biclique);
 		}
-		//std::cout << g.biclique_string(new_biclique) << std::endl;
 	}
-
-//	std::cout << "OCT Star bicliques: " << std::endl;
 	std::set<BicliqueLite> C0;
 	for (auto &v : oct_set) {
 		std::vector<size_t> left, right, temp;
 		left = g.get_neighbors_vector(v);
-//		std::cout << "Neighbors vector for " << v << " has size " << left.size() << " and elements: ";
-//		for (auto itr = left.begin(); itr != left.end(); itr++) {
-//			std::cout << *itr << " ";
-//		}
-//		std::cout << std::endl;
 		right = g.get_neighborhood_intersection(left, false);
 		//if right does not have the original vertex, add it in (should not be necessary)
 		if (find(right.begin(), right.end(), v) == left.end()) {
@@ -86,18 +75,6 @@ void octmica_cc(OutputOptions & octmica_results,
 		if(C.insert(new_biclique).second) {
 			octmica_results.push_back(new_biclique);
 		}
-//		std::cout << g.biclique_string(new_biclique) << std::endl;
-//		std::cout << "before putting in biclique object, left and right are:" << std::endl;
-//		for (auto itr = left.begin(); itr != left.end(); itr++) {
-//			std::cout << *itr << " ";
-//		}
-//		std::cout << std::endl;
-//		for (auto itr = right.begin(); itr != right.end(); itr++) {
-//			std::cout << *itr << " ";
-//		}
-		//std::cout << std::endl;
-		//std::cout << "For starting vertex: " << v << " found max'l biclique (" << g.is_biclique(*(it.first)) << "):" << std::endl;
-		//std::cout << g.biclique_string(*(it.first)) << std::endl;
 	}
 	mica_initialized(octmica_results, g, C0, C);
 }
@@ -113,7 +90,6 @@ void octmica(OutputOptions & octmica_results,
              OrderedVertexSet input_left_set,
              OrderedVertexSet input_right_set) {
 
-    //std::cout << "in octmica" << std::endl;
     octmica_results.set_base_graph(g);
     octmica_results.n = g.get_num_vertices();
     octmica_results.m = g.get_num_edges();
