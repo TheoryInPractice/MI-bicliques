@@ -20,12 +20,12 @@
 
 
 void maximal_crossing_bicliques_bipartite(OutputOptions &mcbbresults,
-                                          Graph &graph,
+                                          const Graph &graph,
                                           const std::vector<size_t> &left_set,
                                           const std::vector<size_t> &right_set);
 
 
-std::vector<BicliqueLite> maximal_crossing_bicliques_bipartite(Graph &graph,
+std::vector<BicliqueLite> maximal_crossing_bicliques_bipartite(const Graph &graph,
                                                 const std::vector<size_t> &left,
                                                 const std::vector<size_t> &right);
 
