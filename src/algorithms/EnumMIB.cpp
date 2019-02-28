@@ -18,7 +18,7 @@
 *   This code assumes no node is isolated.
 */
 
-#include "NonLexMIB.h"
+#include "EnumMIB.h"
 #include "SimpleCCs.h"
 
 
@@ -168,7 +168,7 @@ void check_for_mib_nonlex(const Graph& g,
  * NonLexMIBResults object is for tracking statistics related to the algorithm's
  * performance.
  */
-void nonlexmib_cc(NonLexMIBResults & nonlexmibresults,
+void enummib_cc(NonLexMIBResults & nonlexmibresults,
                      const Graph & g) {
 
     // Set up data structures:
@@ -245,7 +245,7 @@ void nonlexmib_cc(NonLexMIBResults & nonlexmibresults,
  * connected components, runs the algorithm on each CC, and aggregates
  * the results.
  */
-void nonlexmib(NonLexMIBResults & nonlexmibresults, const Graph & g) {
+void enummib(NonLexMIBResults & nonlexmibresults, const Graph & g) {
 
     // Determine connected components
     auto vector_of_ccs = simpleccs(g);
@@ -293,8 +293,8 @@ void nonlexmib(NonLexMIBResults & nonlexmibresults, const Graph & g) {
 * this function unless you need specific information provided by the above
 * functions.
 */
-std::vector<BicliqueLite> nonlexmib(const Graph & g) {
+std::vector<BicliqueLite> enummib(const Graph & g) {
     NonLexMIBResults nonlexmibresults;
-    nonlexmib(nonlexmibresults, g);
+    enummib(nonlexmibresults, g);
     return nonlexmibresults.mibs_computed;
 }
