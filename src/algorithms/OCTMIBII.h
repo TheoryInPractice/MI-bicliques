@@ -6,8 +6,8 @@
 * It is licensed under the three-clause BSD license; see LICENSE.
 */
 
-#ifndef BICLIQUES_IOCTMIB_H
-#define BICLIQUES_IOCTMIB_H
+#ifndef BICLIQUES_OCTMIBII_H
+#define BICLIQUES_OCTMIBII_H
 
 #include <fstream>
 #include <queue>
@@ -33,7 +33,7 @@ bool make_maximal(const Graph & g, BicliqueLite & b, OrderedVertexSet expansion_
 
 BicliqueLite add_to(const Graph & g, BicliqueLite & b, bool left, size_t vertex);
 
-void ioctmib_cc(OutputOptions & ioctmib_results,
+void octmibii_cc(OutputOptions & octmibii_results,
         const Graph & g,
         const OrderedVertexSet input_oct_set,
         const OrderedVertexSet input_left_set,
@@ -44,11 +44,11 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
  * connected components, runs our algorithm on each CC, and aggregates
  * the results.
  */
-void ioctmib(OutputOptions & ioctmib_results,
+void octmibii(OutputOptions & octmibii_results,
              const Graph & g,
              OrderedVertexSet input_oct_set,
              OrderedVertexSet input_left_set,
              OrderedVertexSet input_right_set);
 
 
-#endif //BICLIQUES_IOCTMIB_H
+#endif //BICLIQUES_OCTMIBII_H
