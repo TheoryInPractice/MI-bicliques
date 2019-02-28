@@ -164,7 +164,7 @@ void check_for_mib_nonlex(const Graph& g,
 
 
 /**
- * Runs LexMIB assuming the input graph is connected.
+ * Runs EnumMIB assuming the input graph is connected.
  * NonLexMIBResults object is for tracking statistics related to the algorithm's
  * performance.
  */
@@ -241,7 +241,7 @@ void enummib_cc(NonLexMIBResults & nonlexmibresults,
 
 
 /**
- * Wrapper for MIB enumeration algorithm LexMIB that first separates out
+ * Wrapper for MIB enumeration algorithm EnumMIB that first separates out
  * connected components, runs the algorithm on each CC, and aggregates
  * the results.
  */
