@@ -15,11 +15,11 @@
 #include <fstream>
 #include "graph/Graph.h"
 #include "algorithms/OCTMIB.h"
-#include "algorithms/iOCTMIB.h"
+#include "algorithms/OCTMIBII.h"
 #include "algorithms/LexMIB.h"
-#include "algorithms/NonLexMIB.h"
 #include "algorithms/MICA.h"
 #include "algorithms/OCTMICA.h"
+#include "algorithms/EnumMIB.h"
 #include "algorithms/SimpleCCs.h"
 #include "algorithms/SimpleOCT.h"
 
@@ -110,7 +110,7 @@ struct OutputHandler {
     OutputOptions octmib_results;
     OutputOptions mica_results;
     OutputOptions octmica_results;
-    OutputOptions ioctmib_results;
+    OutputOptions octmibii_results;
     LexMIBResults lexmib_results;
     NonLexMIBResults nonlexmib_results;
 
@@ -270,43 +270,43 @@ struct OutputHandler {
             case 'i':
                 // Ensure we output stats from prescribed decomposition,
                 // if it was provided.
-                if (ioctmib_results.size_left_given > 0) {
-                    ioctmib_results.size_left = ioctmib_results.size_left_given;
-                    ioctmib_results.size_right = ioctmib_results.size_right_given;
-                    ioctmib_results.num_oct_vertices = ioctmib_results.num_oct_vertices_given;
-                    ioctmib_results.num_oct_edges = ioctmib_results.num_oct_edges_given;
+                if (octmibii_results.size_left_given > 0) {
+                    octmibii_results.size_left = octmibii_results.size_left_given;
+                    octmibii_results.size_right = octmibii_results.size_right_given;
+                    octmibii_results.num_oct_vertices = octmibii_results.num_oct_vertices_given;
+                    octmibii_results.num_oct_edges = octmibii_results.num_oct_edges_given;
                 }
 
                 output_file << "OCT-MIB " << this->input_file_path;
                 output_file << " " << this->successful_termination;
-                output_file << " " << ioctmib_results.total_num_mibs << std::flush;
+                output_file << " " << octmibii_results.total_num_mibs << std::flush;
                 // std::fixed prevents scientific notation
                 output_file << std::fixed << " " << this->elapsed_time << std::flush;
-                output_file << " " << ioctmib_results.bipartite_num_mibs << std::flush;
+                output_file << " " << octmibii_results.bipartite_num_mibs << std::flush;
 
-                output_file << " " << ioctmib_results.time_bipartite_mcb << std::flush;
-                output_file << " " << ioctmib_results.time_iter_mis << std::flush;
-                output_file << " " << ioctmib_results.time_mcbs << std::flush;
-                output_file << " " << ioctmib_results.time_blueprint_init << std::flush;
-                output_file << " " << ioctmib_results.time_mcb_checking << std::flush;
-                output_file << " " << ioctmib_results.time_search_tree_expand << std::flush;
+                output_file << " " << octmibii_results.time_bipartite_mcb << std::flush;
+                output_file << " " << octmibii_results.time_iter_mis << std::flush;
+                output_file << " " << octmibii_results.time_mcbs << std::flush;
+                output_file << " " << octmibii_results.time_blueprint_init << std::flush;
+                output_file << " " << octmibii_results.time_mcb_checking << std::flush;
+                output_file << " " << octmibii_results.time_search_tree_expand << std::flush;
 
-                output_file << " " << ioctmib_results.time_oct_MIS << std::flush;
-                output_file << " " << ioctmib_results.time_oct_decomp << std::flush;
-                output_file << " " << ioctmib_results.time_ccs << std::flush;
-                output_file << " " << ioctmib_results.num_oct_iter_mis_completed << std::flush;
-                output_file << " " << ioctmib_results.num_oct_iter_mis << std::flush;
+                output_file << " " << octmibii_results.time_oct_MIS << std::flush;
+                output_file << " " << octmibii_results.time_oct_decomp << std::flush;
+                output_file << " " << octmibii_results.time_ccs << std::flush;
+                output_file << " " << octmibii_results.num_oct_iter_mis_completed << std::flush;
+                output_file << " " << octmibii_results.num_oct_iter_mis << std::flush;
 
-                output_file << " " << ioctmib_results.num_oct_mis_completed << std::flush;
-                output_file << " " << ioctmib_results.num_oct_mis << std::flush;
-                output_file << " " << ioctmib_results.num_oct_edges << std::flush;
-                output_file << " " << ioctmib_results.num_oct_vertices << std::flush;
-                output_file << " " << ioctmib_results.size_left << std::flush;
-                output_file << " " << ioctmib_results.size_right << std::flush;
+                output_file << " " << octmibii_results.num_oct_mis_completed << std::flush;
+                output_file << " " << octmibii_results.num_oct_mis << std::flush;
+                output_file << " " << octmibii_results.num_oct_edges << std::flush;
+                output_file << " " << octmibii_results.num_oct_vertices << std::flush;
+                output_file << " " << octmibii_results.size_left << std::flush;
+                output_file << " " << octmibii_results.size_right << std::flush;
                 output_file << " " << this->num_edges << std::flush;
                 output_file << " " << this->num_vertices << std::flush;
                 output_file << " " << this->time_out_value << std::flush;
-                output_file << " " << ioctmib_results.mib_limit_value  << std::flush;
+                output_file << " " << octmibii_results.mib_limit_value  << std::flush;
                 output_file << std::endl;
                 break;
             case 'l':
@@ -321,7 +321,7 @@ struct OutputHandler {
                 output_file << std::endl;
                 break;
 			case 'n':
-                output_file << "NonLexMIB " << this->input_file_path;
+                output_file << "EnumMIB " << this->input_file_path;
                 output_file << " " << this->successful_termination;
                 output_file  << " " << nonlexmib_results.total_num_mibs;
                 // std::fixed prevents scientific notation
@@ -527,10 +527,10 @@ int main(int argc, char ** argv) {
             break;
         case 'i':
 	    {
-		    std::cout << "# Starting algorithm iOCT-MIB" << std::endl;
+		    std::cout << "# Starting algorithm OCT-MIB-II" << std::endl;
 	            if (print_results_path!=std::string("")) {
-	                output_tracker.ioctmib_results.turn_on_print_mode(print_results_path);
-	                output_tracker.ioctmib_results.count_only_mode = count_only_mode;
+	                output_tracker.octmibii_results.turn_on_print_mode(print_results_path);
+	                output_tracker.octmibii_results.count_only_mode = count_only_mode;
 	            }
 	            std::vector<size_t> right_nodes;
 	            auto oct_itr = oct_set.begin();
@@ -546,7 +546,7 @@ int main(int argc, char ** argv) {
 	            	}
 	            }
 	            OrderedVertexSet right_partition = OrderedVertexSet(right_nodes);
-	            ioctmib(output_tracker.ioctmib_results, input_g, oct_set, left_partition, right_partition);
+	            octmibii(output_tracker.octmibii_results, input_g, oct_set, left_partition, right_partition);
 	    }
             break;
         case 'l':  // run LexMIB
@@ -558,12 +558,12 @@ int main(int argc, char ** argv) {
             lexmib(output_tracker.lexmib_results, input_g);
             break;
         case 'n':
-            std::cout << "# Starting algorithm NonLexMIB" << std::endl;
+            std::cout << "# Starting algorithm EnumMIB" << std::endl;
             if (print_results_path!=std::string("")) {
                 output_tracker.nonlexmib_results.turn_on_print_mode(print_results_path);
                 output_tracker.nonlexmib_results.count_only_mode = count_only_mode;
             }
-            nonlexmib(output_tracker.nonlexmib_results, input_g);
+            enummib(output_tracker.nonlexmib_results, input_g);
             break;
         case 'c':  // just count connected components
             {

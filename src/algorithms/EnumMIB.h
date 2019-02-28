@@ -6,8 +6,8 @@
 * It is licensed under the three-clause BSD license; see LICENSE.
 */
 
-#ifndef BICLIQUES_NONLEXMIB_H
-#define BICLIQUES_NONLEXMIB_H
+#ifndef BICLIQUES_ENUMMIB_H
+#define BICLIQUES_ENUMMIB_H
 
 #include <fstream>
 #include <queue>
@@ -138,18 +138,18 @@ void check_for_mib_nonlex(const Graph & g,
 * Given a graph and NonLexMIBResults object, this updates nonlexmibresults to contain
 * a number of statistics of the graph and the performance of the algorithm.
 */
-void nonlexmib(NonLexMIBResults & nonlexmibresults, const Graph & g);
+void enummib(NonLexMIBResults & nonlexmibresults, const Graph & g);
 
 /**
 * Given a graph this simply computes and outputs a vector of bicliques found.
 */
-std::vector<BicliqueLite> nonlexmib(const Graph & g);
+std::vector<BicliqueLite> enummib(const Graph & g);
 
 /**
 * Intended for internal use; this function assumes the input graph is connected.
 */
-void nonlexmib_cc(NonLexMIBResults & nonlexmibresults,
+void enummib_cc(NonLexMIBResults & nonlexmibresults,
                      const Graph & g);
 
 
-#endif //BICLIQUES_NONLEXMIB_H
+#endif //BICLIQUES_ENUMMIB_H

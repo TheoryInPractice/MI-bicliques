@@ -1,5 +1,5 @@
 /**
-* This implements iOCTMIB, our improved version of OCTMIB
+* This implements OCTMIBII, our improved version of OCTMIB
 * @authors Eric Horton, Kyle Kloster, Drew van der Poel
 *
 * This file is part of MI-bicliques, https://github.com/TheoryInPractice/MI-bicliques,
@@ -10,7 +10,7 @@
 *   This code assumes no node is isolated.
 */
 
-#include "iOCTMIB.h"
+#include "OCTMIBII.h"
 #include "SimpleCCs.h"
 #include "../graph/OrderedVector.h"
 /**
@@ -71,7 +71,7 @@ BicliqueLite add_to(const Graph & g, BicliqueLite & b, bool left, size_t vertex)
 	return BicliqueLite(x_edited, y_edited);
 }
 
-void ioctmib_cc(OutputOptions & ioctmib_results,
+void octmibii_cc(OutputOptions & octmibii_results,
         const Graph & g,
         const OrderedVertexSet input_oct_set,
         const OrderedVertexSet input_left_set,
@@ -101,7 +101,7 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
 			if (make_maximal(g, b, input_oct_set, left_right)) {
 				if (hash_set.insert(b).second) {
 					stack.push(b);
-					ioctmib_results.push_back(b);
+					octmibii_results.push_back(b);
 				}
 			}
 		}
@@ -130,7 +130,7 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
 		if(make_maximal(g, b, input_oct_set, left_right)) {
 			if (hash_set.insert(b).second) {
 				stack.push(b);
-				ioctmib_results.push_back(b);
+				octmibii_results.push_back(b);
 			}
 		}
 	}
@@ -145,14 +145,14 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
 				if(make_maximal(g, m1, input_oct_set, left_right)) {
 					if (hash_set.insert(m1).second) {
 						stack.push(m1);
-						ioctmib_results.push_back(m1);
+						octmibii_results.push_back(m1);
 					}
 				}
 				BicliqueLite m2 = add_to(g, cur, false, *o_itr);
 				if(make_maximal(g, m2, input_oct_set, left_right)) {
 					if (hash_set.insert(m2).second) {
 						stack.push(m2);
-						ioctmib_results.push_back(m2);
+						octmibii_results.push_back(m2);
 					}
 				}
 			}
@@ -165,31 +165,31 @@ void ioctmib_cc(OutputOptions & ioctmib_results,
  * connected components, runs our algorithm on each CC, and aggregates
  * the results.
  */
-void ioctmib(OutputOptions & ioctmib_results,
+void octmibii(OutputOptions & octmibii_results,
              const Graph & g,
              OrderedVertexSet input_oct_set,
              OrderedVertexSet input_left_set,
              OrderedVertexSet input_right_set) {
 
-    ioctmib_results.set_base_graph(g);
-    ioctmib_results.n = g.get_num_vertices();
-    ioctmib_results.m = g.get_num_edges();
+    octmibii_results.set_base_graph(g);
+    octmibii_results.n = g.get_num_vertices();
+    octmibii_results.m = g.get_num_edges();
 
     // Determine connected components
     clock_t begint = std::clock();
     std::vector<std::vector<size_t>> vector_of_ccs = simpleccs(g);
     clock_t endt = std::clock();
-    ioctmib_results.time_ccs += double(endt - begint) / CLOCKS_PER_SEC;
-    ioctmib_results.num_connected_components = vector_of_ccs.size();
+    octmibii_results.time_ccs += double(endt - begint) / CLOCKS_PER_SEC;
+    octmibii_results.num_connected_components = vector_of_ccs.size();
 
     std::cout << "# Graph has " << vector_of_ccs.size();
-    std::cout << " connected components. CC ran in " << ioctmib_results.time_ccs;
+    std::cout << " connected components. CC ran in " << octmibii_results.time_ccs;
     std::cout << std::endl;
 
     // Get correct number edges in prescribed OCT decomp, if provided
     if (input_oct_set.size() > 0) {
         Graph temp_graph = g.subgraph(input_oct_set);
-        ioctmib_results.num_oct_edges_given = temp_graph.get_num_edges();
+        octmibii_results.num_oct_edges_given = temp_graph.get_num_edges();
     }
 
 
@@ -203,7 +203,7 @@ void ioctmib(OutputOptions & ioctmib_results,
             begint = std::clock();
 
             std::vector<size_t> vertex_subset = vector_of_ccs[which_cc];
-            ioctmib_results.relabeling_mode = false;
+            octmibii_results.relabeling_mode = false;
 
             // relabel ground truth using this ordering
             std::vector<size_t> reverse_ordering(g.get_num_vertices());
@@ -218,7 +218,7 @@ void ioctmib(OutputOptions & ioctmib_results,
 
             // Skip Isolated vertices and empty sets
             if (vertex_subset.size() <= 1) {
-                ioctmib_results.isolates ++;
+                octmibii_results.isolates ++;
                 continue;
             }
 
@@ -226,9 +226,9 @@ void ioctmib(OutputOptions & ioctmib_results,
             if (vertex_subset.size() == 2) {
                 BicliqueLite temp((std::vector<size_t>){vertex_subset.front()},
                                   (std::vector<size_t>){vertex_subset.back()});
-                ioctmib_results.push_back_bipartite(temp);
-                ioctmib_results.size_left ++;
-                ioctmib_results.size_right ++;
+                octmibii_results.push_back_bipartite(temp);
+                octmibii_results.size_left ++;
+                octmibii_results.size_right ++;
                 continue;
             }
 
@@ -246,8 +246,8 @@ void ioctmib(OutputOptions & ioctmib_results,
             left_set_cc = convert_node_labels_OVS(left_set_cc, reverse_ordering);
             right_set_cc = convert_node_labels_OVS(right_set_cc, reverse_ordering);
 
-            ioctmib_results.turn_on_relabeling_mode(vertex_subset);
-            ioctmib_cc(ioctmib_results, g_cc, oct_set_cc, left_set_cc, right_set_cc);
+            octmibii_results.turn_on_relabeling_mode(vertex_subset);
+            octmibii_cc(octmibii_results, g_cc, oct_set_cc, left_set_cc, right_set_cc);
 
             endt = std::clock();
             std::cout << "# this CC ran in ";
@@ -258,10 +258,10 @@ void ioctmib(OutputOptions & ioctmib_results,
 
     }
     else {
-        ioctmib_cc(ioctmib_results, g, input_oct_set, input_left_set, input_right_set);
+        octmibii_cc(octmibii_results, g, input_oct_set, input_left_set, input_right_set);
     }
 
-    ioctmib_results.total_num_mibs += ioctmib_results.bipartite_num_mibs;
-    ioctmib_results.close_results();
+    octmibii_results.total_num_mibs += octmibii_results.bipartite_num_mibs;
+    octmibii_results.close_results();
 
 }
