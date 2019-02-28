@@ -43,8 +43,8 @@ add_executable(bicliques
         src/algorithms/AllMaximalIndependentSets.h
         src/algorithms/LexMIB.cpp
         src/algorithms/LexMIB.h
-	src/algorithms/iOCTMIB.h
-	src/algorithms/iOCTMIB.cpp
+	src/algorithms/OCTMIBII.h
+	src/algorithms/OCTMIBII.cpp
         src/algorithms/EnumMIB.cpp
         src/algorithms/EnumMIB.h
         src/algorithms/SimpleCCs.cpp
