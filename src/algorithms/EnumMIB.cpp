@@ -272,12 +272,12 @@ void enummib(NonLexMIBResults & nonlexmibresults, const Graph & g) {
 
             // Call main LexMIB function
             nonlexmibresults.turn_on_relabeling_mode(vertex_subset);
-            nonlexmib_cc(nonlexmibresults, g_cc);
+            enummib_cc(nonlexmibresults, g_cc);
 
         }
     }
     else {
-        nonlexmib_cc(nonlexmibresults, g);
+    	enummib_cc(nonlexmibresults, g);
     }
 
     nonlexmibresults.close_results();
