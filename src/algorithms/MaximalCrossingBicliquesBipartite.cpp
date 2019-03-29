@@ -29,7 +29,7 @@
  * @param independent_set       Must be a independent set within graph.
  */
 void maximal_crossing_bicliques_bipartite(OutputOptions &mcbbresults,
-                                          Graph &input_graph,
+                                          const Graph &input_graph,
                                           const std::vector<size_t> &input_left_set,
                                           const std::vector<size_t> &input_right_set) {
 
@@ -166,7 +166,7 @@ for (const size_t & vertex : independent_set) {
 } // end outer-most function
 
 
-std::vector<BicliqueLite> maximal_crossing_bicliques_bipartite(Graph &graph,
+std::vector<BicliqueLite> maximal_crossing_bicliques_bipartite(const Graph &graph,
                                                 const std::vector<size_t> &left,
                                                 const std::vector<size_t> &right){
 

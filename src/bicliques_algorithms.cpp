@@ -15,7 +15,9 @@
 #include <fstream>
 #include "graph/Graph.h"
 #include "algorithms/OCTMIB.h"
+#include "algorithms/OCTMIBII.h"
 #include "algorithms/LexMIB.h"
+#include "algorithms/EnumMIB.h"
 #include "algorithms/SimpleCCs.h"
 #include "algorithms/SimpleOCT.h"
 
@@ -104,7 +106,9 @@ struct OutputHandler {
     bool is_it_bipartite = false;
 
     OutputOptions octmib_results;
+    OutputOptions octmibii_results;
     LexMIBResults lexmib_results;
+    NonLexMIBResults nonlexmib_results;
 
     void start_timer() { this->begin = std::clock(); }
     void stop_timer() {
@@ -174,10 +178,63 @@ struct OutputHandler {
                 output_file << " " << octmib_results.mib_limit_value  << std::flush;
                 output_file << std::endl;
                 break;
+            case 'i':
+                // Ensure we output stats from prescribed decomposition,
+                // if it was provided.
+                if (octmibii_results.size_left_given > 0) {
+                    octmibii_results.size_left = octmibii_results.size_left_given;
+                    octmibii_results.size_right = octmibii_results.size_right_given;
+                    octmibii_results.num_oct_vertices = octmibii_results.num_oct_vertices_given;
+                    octmibii_results.num_oct_edges = octmibii_results.num_oct_edges_given;
+                }
+
+                output_file << "OCT-MIB " << this->input_file_path;
+                output_file << " " << this->successful_termination;
+                output_file << " " << octmibii_results.total_num_mibs << std::flush;
+                // std::fixed prevents scientific notation
+                output_file << std::fixed << " " << this->elapsed_time << std::flush;
+                output_file << " " << octmibii_results.bipartite_num_mibs << std::flush;
+
+                output_file << " " << octmibii_results.time_bipartite_mcb << std::flush;
+                output_file << " " << octmibii_results.time_iter_mis << std::flush;
+                output_file << " " << octmibii_results.time_mcbs << std::flush;
+                output_file << " " << octmibii_results.time_blueprint_init << std::flush;
+                output_file << " " << octmibii_results.time_mcb_checking << std::flush;
+                output_file << " " << octmibii_results.time_search_tree_expand << std::flush;
+
+                output_file << " " << octmibii_results.time_oct_MIS << std::flush;
+                output_file << " " << octmibii_results.time_oct_decomp << std::flush;
+                output_file << " " << octmibii_results.time_ccs << std::flush;
+                output_file << " " << octmibii_results.num_oct_iter_mis_completed << std::flush;
+                output_file << " " << octmibii_results.num_oct_iter_mis << std::flush;
+
+                output_file << " " << octmibii_results.num_oct_mis_completed << std::flush;
+                output_file << " " << octmibii_results.num_oct_mis << std::flush;
+                output_file << " " << octmibii_results.num_oct_edges << std::flush;
+                output_file << " " << octmibii_results.num_oct_vertices << std::flush;
+                output_file << " " << octmibii_results.size_left << std::flush;
+                output_file << " " << octmibii_results.size_right << std::flush;
+                output_file << " " << this->num_edges << std::flush;
+                output_file << " " << this->num_vertices << std::flush;
+                output_file << " " << this->time_out_value << std::flush;
+                output_file << " " << octmibii_results.mib_limit_value  << std::flush;
+                output_file << std::endl;
+                break;
             case 'l':
                 output_file << "LexMIB " << this->input_file_path;
                 output_file << " " << this->successful_termination;
                 output_file  << " " << lexmib_results.total_num_mibs;
+                // std::fixed prevents scientific notation
+                output_file << std::fixed << " " << this->elapsed_time;
+                output_file << " " << this->num_edges;
+                output_file << " " << this->num_vertices;
+                output_file << " " << this->time_out_value;
+                output_file << std::endl;
+                break;
+			case 'n':
+                output_file << "EnumMIB " << this->input_file_path;
+                output_file << " " << this->successful_termination;
+                output_file  << " " << nonlexmib_results.total_num_mibs;
                 // std::fixed prevents scientific notation
                 output_file << std::fixed << " " << this->elapsed_time;
                 output_file << " " << this->num_edges;
@@ -282,7 +339,8 @@ int main(int argc, char ** argv) {
         std::cout << "Bicliques algorithms suite.\n\n";
         std::cout << "required arguments:\n";
         std::cout << "\tALGORITHM             which algorithm to use: l (LexMIB), ";
-        std::cout << "o (OCT-MIB), c (counts # CCs), b (checks if bipartite)\n";
+        std::cout << "o (OCT-MIB), c (counts # CCs), b (checks if bipartite), ";
+        std::cout << "i (improved OCT-MIB)\n";
         std::cout << "\tPATH_TO_INPUT_FILE    directory and filename of input graph\n\n";
         std::cout << "optional arguments:\n";
         std::cout << "\t-h                    show this help message and exit\n";
@@ -301,7 +359,9 @@ int main(int argc, char ** argv) {
     if (output_tracker.which_algorithm != "l" &&
         output_tracker.which_algorithm != "o" &&
         output_tracker.which_algorithm != "b" &&
-        output_tracker.which_algorithm != "c") {
+        output_tracker.which_algorithm != "c" &&
+		output_tracker.which_algorithm != "n" &&
+		output_tracker.which_algorithm != "i") {
         std::cout << "ERROR::BICLIQUES incorrect algorithm specified: ";
         std::cout << output_tracker.which_algorithm << std::endl;
         error = 0;
@@ -374,6 +434,30 @@ int main(int argc, char ** argv) {
             }
             octmib(output_tracker.octmib_results, input_g, oct_set, left_partition);
             break;
+        case 'i':
+	    {
+		    std::cout << "# Starting algorithm OCT-MIB-II" << std::endl;
+	            if (print_results_path!=std::string("")) {
+	                output_tracker.octmibii_results.turn_on_print_mode(print_results_path);
+	                output_tracker.octmibii_results.count_only_mode = count_only_mode;
+	            }
+	            std::vector<size_t> right_nodes;
+	            auto oct_itr = oct_set.begin();
+	            auto left_itr = left_partition.begin();
+	            //we are going to iterate over all of the nodes in the graph and add the ones that are not in oct or left
+	            for (size_t i = 0; i < input_g.get_num_vertices(); i++) {
+	            	if (oct_itr != oct_set.end() && *oct_itr == i) {
+	            		oct_itr++;
+	            	} else if (left_itr != left_partition.end() && *left_itr == i) {
+	            		left_itr++;
+	            	} else {
+	            		right_nodes.push_back(i);
+	            	}
+	            }
+	            OrderedVertexSet right_partition = OrderedVertexSet(right_nodes);
+	            octmibii(output_tracker.octmibii_results, input_g, oct_set, left_partition, right_partition);
+	    }
+            break;
         case 'l':  // run LexMIB
             std::cout << "# Starting algorithm LexMIB" << std::endl;
             if (print_results_path!=std::string("")) {
@@ -381,6 +465,14 @@ int main(int argc, char ** argv) {
                 output_tracker.lexmib_results.count_only_mode = count_only_mode;
             }
             lexmib(output_tracker.lexmib_results, input_g);
+            break;
+        case 'n':
+            std::cout << "# Starting algorithm EnumMIB" << std::endl;
+            if (print_results_path!=std::string("")) {
+                output_tracker.nonlexmib_results.turn_on_print_mode(print_results_path);
+                output_tracker.nonlexmib_results.count_only_mode = count_only_mode;
+            }
+            enummib(output_tracker.nonlexmib_results, input_g);
             break;
         case 'c':  // just count connected components
             {
