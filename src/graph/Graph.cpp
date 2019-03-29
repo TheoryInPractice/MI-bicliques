@@ -416,15 +416,18 @@ std::string Graph::get_external_vertex_label(size_t internal_vertex_label) {
  * @return   string consisting of the string labels of the vertices
  *           in the biclique, ordered, and separated by commas.
  */
-std::string Graph::biclique_string(BicliqueLite &b) {
+std::string Graph::biclique_string(const BicliqueLite &b) const {
 
     std::stringstream s;
 
-    const auto & all_vertices = b.get_all_vertices();
+    const std::vector<size_t>& all_vertices = b.get_all_vertices();
 
     // iterate over every node in the biclique
-    for (auto v : all_vertices) {
-        s << node_labels[v] << ",";
+    for (std::vector<size_t>::const_iterator v = all_vertices.begin(); v != all_vertices.end(); v++) {
+	// We know that everything is in the map, so we don't need to check existence first.
+	// We are using "find" instead of [] because [] modifies the map if not there and
+	// we need this to be const.
+        s << node_labels.find(*v)->second << ",";
     }
 
     return s.str();

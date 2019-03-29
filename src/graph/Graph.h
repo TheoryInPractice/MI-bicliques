@@ -106,7 +106,7 @@ public:
     std::string get_external_vertex_label(size_t internal_vertex_label);
 
     // For recording bicliques for comparing to ground truth
-    std::string biclique_string(BicliqueLite &b);
+    std::string biclique_string(const BicliqueLite &b) const;
     bool can_be_added_to_biclique(const size_t v, const BicliqueLite &b) const;
     bool is_biclique(const BicliqueLite & this_biclique) const;
 
