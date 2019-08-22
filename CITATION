@@ -29,22 +29,34 @@ cite the relevant paper(s) as directed below.
 
 ===========================================================
 
-The methods in lib:MI-bicliques (which are used in the main pipeline :program:`biclique_algorithms.cpp`) implement the maximal induced biclique enumeration algorithm described in:
+The methods in lib:MI-bicliques (which are used in the main pipeline :program:`biclique_algorithms.cpp`) implement the maximal (induced) biclique enumeration algorithms described in:
 
    K. Kloster, B.D. Sullivan, and A. van der Poel. (2018)
    Mining Maximal Induced Bicliques using Odd Cycle Transversals.
-   ArXiv preprint forthcoming.
-
+   Proceedings of the 2019 SIAM International Conference on Data Mining.
+   https://epubs.siam.org/doi/pdf/10.1137/1.9781611975673.37
+   
+   
+   B.D. Sullivan, A. van der Poel, and T. Woodlief. (2019)
+   Faster Biclique Mining in Near-Bipartite Graphs.
+   Special Event on Analysis of Experimental Algorithms.
+   https://arxiv.org/pdf/1903.01538.pdf
 
 .. code-block:: tex
 
-@article{mibicliques2018,
-  author    = {
-               Kyle Kloster and
-               Blair D. Sullivan and
-               Andrew van der Poel},
-  title     = {Mining Maximal Induced Bicliques using Odd Cycle Transversals},
-  volume    = {abs/1810.11421},
-  year      = {2018},
-  url       = {https://arxiv.org/abs/1810.11421},
+@inproceedings{kloster2019mining,
+  title={Mining Maximal Induced Bicliques using Odd Cycle Transversals},
+  author={Kloster, Kyle and van der Poel, Andrew and Sullivan, Blair D},
+  booktitle={Proceedings of the 2019 SIAM International Conference on Data Mining},
+  pages={324--332},
+  year={2019},
+  organization={SIAM}
+}
+
+@inproceedings{sullivan2019faster,
+  title={Faster Biclique Mining in Near-Bipartite Graphs},
+  author={Sullivan, Blair D and van der Poel, Andrew and Woodlief, Trey},
+  booktitle={Special Event on Analysis of Experimental Algorithms},
+  year={2019},
+  organization={Springer}
 }
