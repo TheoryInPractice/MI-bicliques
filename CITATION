@@ -7,6 +7,28 @@ Software Citation
 
 If you use the MI-bicliques software, you must cite:
 
+E. Horton, K. Kloster, B.D. Sullivan, A. van der Poel, and T. Woodlief, MI-bicliques (2019).
+MI-bicliques: Version 2.0. Zenodo. 10.5281/zenodo.3381532
+
+..code-block::tex
+
+                  @misc{MI_bicliques_v2.0,
+                    author       = {Eric Horton and
+                                    Kyle Kloster and
+                                    Blair D.~Sullivan and
+                                    Andrew van der Poel and
+                                    Trey Woodlief},
+                    title        = {MI-bicliques: Version 2.0},
+                    month        = aug,
+                    year         = 2019,
+                    doi          = {10.5281/zenodo.3381532},
+                    url          = {https://doi.org/10.5281/zenodo.3381532}
+                  }
+                  
+                  
+
+If using Version 1.0, you must cite the following:
+
 E. Horton, K. Kloster, B.D. Sullivan, and A. van der Poel, MI-bicliques (2018).
 MI-bicliques: Version 1.0. Zenodo. 10.5281/zenodo.1238879
 
