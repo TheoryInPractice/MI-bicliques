@@ -1,5 +1,7 @@
 # MI-bicliques
-Algorithms for enumerating maximal induced bicliques. OCT-MIB is designed for graphs which are "near bipartite" described in Kloster et al. 2018+; LexMIB is an improved version of the algorithm described in Dias et al. 2005.
+Algorithms for enumerating maximal bicliques, both in the induced and non-induced settings. 
+Several approaches enumerate maximal induced bicliques; OCT-MIB and OCT-MIB-II are designed for graphs which are "near bipartite" (described in Kloster et al. 2018 and Sullivan et al. 2019); LexMIB is an improved version of the algorithm described in Dias et al. 2005; Enum-MIB is designed for general graphs and is not tailored for a specific class (Sullivan et al. 2019).
+We also provide algorithms which enumerate maximal (non-induced) bicliques; MICA is our implementation of the approach described in Alexe at al. 2004; OCT-MICA refines the previous method to be optimal on "near bipartite" graphs (Sullivan et al. 2019).
 
 ## Table of Contents
 
@@ -26,10 +28,10 @@ After those installations, run the following commands from the repo root directo
 ## Command line usage
 
 Required arguments:
-  * `-a` --- specify which algorithm to run. Options for biclique enumeration: `o` (our algorithm OCT-MIB), `l` (LexMIB). Options that are not biclique enumerators: `b` (test whether the graph is bipartite via BFS) and `c` (counts the number of connected components via BFS).
+  * `-a` --- specify which algorithm to run. Options for biclique enumeration: `o` (OCT-MIB), `l` (LexMIB), `i` (OCT-MIB-II), `n` (Enum-MIB), `m` (MICA), `t` (OCT-MICA). Options that are not biclique enumerators: `b` (test whether the graph is bipartite via BFS) and `c` (counts the number of connected components via BFS).
   * `-i` --- specify the path to and filename of a graph (see "Data Formatting" below)
 
-Optional arguments for both Dias and OCT-MIB:
+Optional arguments for all algorithms
   * `-h` --- Show a help message and exit.
   * `-t [TIMEOUT]`  --- Set a timeout for the algorithm.
   * `-c` --- Run in count-only mode; Do not output the bicliques, only count how many there are.
